@@ -1,0 +1,63 @@
+@layouts.lp()
+@set('title', 'Plantopia')
+
+    @slot('main')
+    {{-- about section --}}
+   <section class="bg-green-600 py-20 md:py-28">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center space-y-6 max-w-3xl mx-auto">
+                <h2 class="text-4xl md:text-5xl font-bold text-white">
+                    About Us
+                </h2>
+                <p class="text-lg text-white leading-relaxed">
+                    Kami merupakan sebuah platform penghubung bagi para pecinta tanaman hias, kami
+                    mempercayai bahwa tanaman hias lebih dari sekadar elemen dekorasi. Kami berdedikasi
+                    untuk menjadi jembatan antara Anda dan alam, menawarkan kesejahteraan, bukan hanya
+                    produk. Setiap pembelian di platform kami adalah langkah nyata dalam menumbuhkan
+                    kesabaran, fokus, dan kepuasan sederhana melalui seni merawat. Kami memastikan Anda
+                    mendapatkan tanaman dengan kualitas terbaik dan pengetahuan yang tepat untuk
+                    menjaga harapan itu terus tumbuh subur di rumah Anda
+                </p>
+            </div>
+        </div>
+    </section>
+
+    {{-- philosophy section --}}
+    <section class="bg-white text-gray-800 py-20 md:py-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <h1 class="text-5xl md:text-6xl font-bold leading-tight">
+                        Our Philosophy
+                    </h1>
+                    <p class="text-lg md:text-xl text-gray-800 leading-relaxed">
+                        Filosofi kami berakar kuat pada logo kami sebuah Tunas Muda yang dirangkul oleh Telapak Tangan di dalam sebuah Lingkaran. 
+                        Tunas melambangkan janji akan kehidupan baru dan energi positif, sementara tangan mewakili tanggung jawab dan kasih sayang yang kami dan Anda berikan dalam proses merawat. 
+                        Lingkaran menegaskan komitmen kami pada siklus kehidupan yang seimbang dan berkelanjutan.
+                    </p>
+                </div>
+                <div class="hidden md:block">
+                    <div class="h-64 flex items-center justify-center">
+                        <img src="/resources/assets/logo/plantopia_dark_logo.png">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- Vision section --}}
+    <section class="bg-green-600 py-20 md:py-28">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center space-y-6 max-w-3xl mx-auto">
+                <h2 class="text-4xl md:text-5xl font-bold text-white">
+                    Our Vision
+                </h2>
+                <p class="text-lg text-white leading-relaxed">
+                   Visi kami adalah mentransformasi setiap rumah menjadi mikroekosistem yang sehat. Kami menyediakan akses ke tanaman hias terbaik
+                    yang tidak hanya memperindah secara estetika, tetapi juga berfungsi sebagai filter udara alami dan sumber ketenangan mental.
+                </p>
+            </div>
+        </div>
+    </section>
+    @endslot
+@end
