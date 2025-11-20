@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    @if ($slots.meta)
+        {{{ await $slots.meta() }}}
+    @endif
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plantopia</title>
+    @vite('resources/css/app.css')
+</head>
+<body class="bg-white">
+    {{-- Navbar --}}
+    @if ($slots.header)
+        {{{ await $slots.header() }}}
+    @else
+        <nav class="bg-white shadow-md sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    {{-- Logo --}}
+                    <div class="flex-shrink: 0">
+                        <a href="/" class="flex items-center gap-2">
+                            <img src="/resources/assets/logo/plantopia_dark_logo.png" class="w-16 h-16">
+                            <img src="/resources/assets/logo/plantopia_dark_font_logo.png" class="w-32 h-32">
+                        </a>
+                    </div>
+
+                    {{-- Menu Items --}}
+                    <div class="hidden md:flex items-center gap-8">
+                        <a href="#about" class="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200">About Us</a>
+                        <a href="#contact" class="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200">Contact Us</a>
+                    </div>
+
+                    {{-- Auth Buttons --}}
+                    <div class="flex items-center gap-4">
+                        <a href="/login" class="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200 hidden md:block">Login</a>
+                        <a href="/register" class="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors duration-200">Register</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    @endif
+
+    {{-- Main Content --}}
+    <main class="min-h-screen">
+        {{{ await $slots.main() }}}
+    </main>
+
+    {{-- Footer --}}
+    @if($slots.footer)
+        {{{ await $slots.footer() }}}
+    @else
+        <footer class="bg-gray-900 text-gray-300">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                    {{-- Company Info --}}
+                    <div>
+                        <div class="flex items-center gap-2 mb-4">
+                            <a href="/" class="flex items-center gap-2">
+                                <img src="/resources/assets/logo/plantopia_light_logo.png" class="w-24 h-24">
+                                <img src="/resources/assets/logo/plantopia_light_font_logo.png" class="w-32 h-32">
+                            </a>
+                        </div>
+                        <p class="text-sm text-gray-400">Bringing nature closer to your home with premium plants and care guidance.</p>
+                    </div>
+
+                    {{-- Quick Links --}}
+                    <div>
+                        <h3 class="text-white font-semibold mb-4">Quick Links</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="hover:text-green-400 transition-colors duration-200">Home</a></li>
+                            <li><a href="#" class="hover:text-green-400 transition-colors duration-200">Shop</a></li>
+                            <li><a href="#" class="hover:text-green-400 transition-colors duration-200">About Us</a></li>
+                            <li><a href="#" class="hover:text-green-400 transition-colors duration-200">Blog</a></li>
+                        </ul>
+                    </div>
+
+                    {{-- Support --}}
+                    <div>
+                        <h3 class="text-white font-semibold mb-4">Support</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="hover:text-green-400 transition-colors duration-200">Contact Us</a></li>
+                            <li><a href="#" class="hover:text-green-400 transition-colors duration-200">FAQ</a></li>
+                            <li><a href="#" class="hover:text-green-400 transition-colors duration-200">Shipping Info</a></li>
+                            <li><a href="#" class="hover:text-green-400 transition-colors duration-200">Returns</a></li>
+                        </ul>
+                    </div>
+
+                    {{-- Newsletter --}}
+                    <div>
+                        <h3 class="text-white font-semibold mb-4">Newsletter</h3>
+                        <p class="text-sm text-gray-400 mb-4">Subscribe to get special offers and updates.</p>
+                        <form class="flex flex-col gap-2">
+                            <input type="email" placeholder="Your email" class="px-4 py-2 rounded bg-gray-800 text-white placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-green-600">
+                            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded font-medium hover:bg-green-700 transition-colors duration-200 text-sm">Subscribe</button>
+                        </form>
+                    </div>
+                </div>
+
+                {{-- Divider --}}
+                <div class="border-t border-gray-800 pt-8">
+                    <div class="flex flex-col md:flex-row justify-between items-center">
+                        <p class="text-sm text-gray-400 mb-4 md:mb-0">&copy; 2025 Plantopia. All rights reserved.</p>
+                        <div class="flex gap-6">
+                            <a href="#" class="text-gray-400 hover:text-green-400 transition-colors duration-200">Privacy Policy</a>
+                            <a href="#" class="text-gray-400 hover:text-green-400 transition-colors duration-200">Terms of Service</a>
+                            <a href="#" class="text-gray-400 hover:text-green-400 transition-colors duration-200">Cookie Policy</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    @endif
+
+    @vite('resources/js/app.js')
+</body>
+</html>
