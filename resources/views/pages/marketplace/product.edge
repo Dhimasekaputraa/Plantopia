@@ -1,0 +1,371 @@
+@layouts.market()
+    @set('title', 'Plantopia - Product Detail')
+
+    @slot('main')
+        <div class="bg-white min-h-screen">
+            {{-- Breadcrumb --}}
+            <div class="max-w-7xl mx-auto px-4 py-4 border-b border-gray-200">
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <a href="/marketplace" class="hover:text-green-600 transition">Marketplace</a>
+                    <span>›</span>
+                    <a href="#" class="hover:text-green-600 transition">Plants</a>
+                    <span>›</span>
+                    <span class="text-gray-800 font-semibold">Product Detail</span>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 py-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    
+                    {{-- Product Image Section --}}
+                    <div class="space-y-4">
+                        {{-- Main Image --}}
+                        <div class="bg-gray-200 rounded-lg h-96 flex items-center justify-center border border-gray-300">
+                            <span class="text-8xl">🌿</span>
+                        </div>
+                        
+                        {{-- Thumbnail Images --}}
+                        <div class="grid grid-cols-4 gap-3">
+                            <div class="bg-gray-200 rounded-lg h-20 flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-green-600 transition border border-gray-300">
+                                <span class="text-3xl">🌿</span>
+                            </div>
+                            <div class="bg-gray-200 rounded-lg h-20 flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-green-600 transition border border-gray-300">
+                                <span class="text-3xl">🌿</span>
+                            </div>
+                            <div class="bg-gray-200 rounded-lg h-20 flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-green-600 transition border border-gray-300">
+                                <span class="text-3xl">🌿</span>
+                            </div>
+                            <div class="bg-gray-200 rounded-lg h-20 flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-green-600 transition border border-gray-300">
+                                <span class="text-3xl">🌿</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Product Info Section --}}
+                    <div class="space-y-6">
+                        {{-- Product Title & Rating --}}
+                        <div>
+                            <h1 class="text-4xl font-bold text-gray-800 mb-2">Monstera Deliciosa</h1>
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="flex gap-1">
+                                    <span class="text-yellow-400">★★★★★</span>
+                                </div>
+                                <span class="text-sm text-gray-600">(256 reviews)</span>
+                            </div>
+                            <p class="text-gray-600">In Stock • Ships within 2-3 days</p>
+                        </div>
+
+                        {{-- Price Section --}}
+                        <div class="space-y-2 pb-6 border-b border-gray-200">
+                            <div class="flex items-center gap-3">
+                                <span class="text-5xl font-bold text-gray-800">$25.00</span>
+                                <span class="text-2xl text-gray-400 line-through">$35.00</span>
+                                <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">-30%</span>
+                            </div>
+                            <p class="text-sm text-green-600 font-semibold">Save $10.00</p>
+                        </div>
+
+                        {{-- Seller Info --}}
+                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                                    <span class="text-lg">👤</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Seller name</h3>
+                                    <p class="text-xs text-gray-600">Plant expert • 4.8★ rating</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Quantity & Add to Cart --}}
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Quantity</label>
+                                <div class="flex items-center border border-gray-300 rounded-lg w-fit">
+                                    <button onclick="decreaseQty()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 transition font-semibold">
+                                        −
+                                    </button>
+                                    <input 
+                                        type="number" 
+                                        id="quantity" 
+                                        value="1" 
+                                        min="1"
+                                        class="w-16 text-center border-l border-r border-gray-300 py-2 focus:outline-none"
+                                    />
+                                    <button onclick="increaseQty()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 transition font-semibold">
+                                        +
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-3">
+                                <button onclick="addToCartDetail()" class="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition flex items-center justify-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.622 0 1.157.456 1.264 1.07l1.07 6.005h15.458a1.5 1.5 0 011.596 1.659l-.5 6a1.5 1.5 0 01-1.595 1.266H5.25" />
+                                    </svg>
+                                    Add to Cart
+                                </button>
+                                <button class="border-2 border-green-600 text-green-600 px-6 py-3 rounded-lg font-bold hover:bg-green-50 transition">
+                                    ♥
+                                </button>
+                            </div>
+                        </div>
+
+                        {{-- Features --}}
+                        <div class="space-y-2 pt-4 border-t border-gray-200">
+                            <div class="flex items-center gap-2 text-gray-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-green-600">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                </svg>
+                                <span class="text-sm">Free shipping on orders over $50</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-green-600">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                </svg>
+                                <span class="text-sm">30-day money back guarantee</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-green-600">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                </svg>
+                                <span class="text-sm">Secure checkout</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Product Description --}}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                    <div class="md:col-span-2">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4">Product Description</h2>
+                        <div class="bg-gray-50 rounded-lg p-6 border border-gray-200 space-y-3 text-gray-700 leading-relaxed">
+                            <p>
+                                The Monstera Deliciosa, also known as the Swiss Cheese Plant, is a popular tropical plant renowned for its stunning appearance and ease of care. This magnificent plant features large, deeply lobed leaves with natural holes and splits that develop as it matures, giving it a unique and tropical aesthetic.
+                            </p>
+                            <p>
+                                Perfect for both beginners and experienced plant enthusiasts, this beauty thrives in bright, indirect light and requires minimal maintenance. It's an excellent choice for adding a touch of nature to any indoor space, whether it's your home, office, or workspace.
+                            </p>
+                            <h3 class="font-semibold text-gray-800 pt-3">Care Instructions:</h3>
+                            <ul class="list-disc list-inside space-y-1">
+                                <li>Light: Bright, indirect light (avoid direct sunlight)</li>
+                                <li>Water: Allow soil to dry between watering</li>
+                                <li>Temperature: Keep between 65-80°F</li>
+                                <li>Humidity: Moderate to high humidity preferred</li>
+                                <li>Soil: Well-draining potting mix</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    {{-- Shipping Info --}}
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Shipping Information</h3>
+                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 space-y-3">
+                            <div>
+                                <p class="text-sm text-gray-600 font-semibold">Standard Shipping</p>
+                                <p class="text-gray-700">5-7 business days • $5.00</p>
+                            </div>
+                            <div class="border-t pt-3">
+                                <p class="text-sm text-gray-600 font-semibold">Express Shipping</p>
+                                <p class="text-gray-700">2-3 business days • $15.00</p>
+                            </div>
+                            <div class="border-t pt-3">
+                                <p class="text-sm text-gray-600 font-semibold">Return Policy</p>
+                                <p class="text-gray-700">30-day full refund if unsatisfied</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- User Reviews --}}
+                <div class="mb-12">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">User Reviews (256 ratings)</h2>
+                    
+                    <div class="space-y-6">
+                        {{-- Review 1 --}}
+                        <div class="bg-white rounded-lg border border-gray-200 p-6">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                                        <span class="text-lg">👤</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Username</h4>
+                                        <p class="text-sm text-gray-600">5 ★ • 2 weeks ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-700 mb-3">Amazing plant! Arrived in perfect condition and is already growing new leaves. Highly recommend this seller!</p>
+                            <div class="flex gap-2">
+                                <div class="bg-gray-200 rounded w-20 h-20 flex items-center justify-center text-2xl">🌿</div>
+                                <div class="bg-gray-200 rounded w-20 h-20 flex items-center justify-center text-2xl">🌿</div>
+                            </div>
+                            <div class="mt-3 text-sm text-gray-600 flex gap-4">
+                                <button class="hover:text-green-600 transition">👍 Helpful (5)</button>
+                                <button class="hover:text-red-600 transition">Not Helpful (1)</button>
+                            </div>
+                        </div>
+
+                        {{-- Review 2 --}}
+                        <div class="bg-white rounded-lg border border-gray-200 p-6">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                                        <span class="text-lg">👤</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Username</h4>
+                                        <p class="text-sm text-gray-600">4 ★ • 1 month ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-700">Great quality plant! A bit smaller than expected but very healthy. Great customer service too.</p>
+                            <div class="mt-3 text-sm text-gray-600 flex gap-4">
+                                <button class="hover:text-green-600 transition">👍 Helpful (12)</button>
+                                <button class="hover:text-red-600 transition">Not Helpful</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-6">
+                        <button class="border-2 border-green-600 text-green-600 px-8 py-3 rounded-lg font-semibold hover:bg-green-50 transition">
+                            Load More Reviews
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Relevant Products --}}
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Relevant Products</h2>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                        {{-- Product Card 1 --}}
+                        <a href="#" class="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border border-gray-200 cursor-pointer group">
+                            <div class="bg-green-200 h-32 flex items-center justify-center relative overflow-hidden">
+                                <span class="text-4xl group-hover:scale-110 transition">🌱</span>
+                            </div>
+                            <div class="p-3">
+                                <h5 class="font-semibold text-gray-800 text-sm truncate">Pothos Golden</h5>
+                                <p class="text-green-600 font-bold text-sm">$18</p>
+                                <div class="flex items-center gap-1 mt-1 text-xs">
+                                    <span class="text-yellow-400">★★★★★</span>
+                                    <span class="text-gray-600">(128)</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        {{-- Product Card 2 --}}
+                        <a href="#" class="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border border-gray-200 cursor-pointer group">
+                            <div class="bg-green-200 h-32 flex items-center justify-center relative overflow-hidden">
+                                <span class="text-4xl group-hover:scale-110 transition">🍃</span>
+                            </div>
+                            <div class="p-3">
+                                <h5 class="font-semibold text-gray-800 text-sm truncate">Snake Plant</h5>
+                                <p class="text-green-600 font-bold text-sm">$20</p>
+                                <div class="flex items-center gap-1 mt-1 text-xs">
+                                    <span class="text-yellow-400">★★★★★</span>
+                                    <span class="text-gray-600">(89)</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        {{-- Product Card 3 --}}
+                        <a href="#" class="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border border-gray-200 cursor-pointer group">
+                            <div class="bg-green-200 h-32 flex items-center justify-center relative overflow-hidden">
+                                <span class="text-4xl group-hover:scale-110 transition">🌾</span>
+                            </div>
+                            <div class="p-3">
+                                <h5 class="font-semibold text-gray-800 text-sm truncate">Bamboo</h5>
+                                <p class="text-green-600 font-bold text-sm">$15</p>
+                                <div class="flex items-center gap-1 mt-1 text-xs">
+                                    <span class="text-yellow-400">★★★★☆</span>
+                                    <span class="text-gray-600">(76)</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        {{-- Product Card 4 --}}
+                        <a href="#" class="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border border-gray-200 cursor-pointer group">
+                            <div class="bg-green-200 h-32 flex items-center justify-center relative overflow-hidden">
+                                <span class="text-4xl group-hover:scale-110 transition">🌻</span>
+                            </div>
+                            <div class="p-3">
+                                <h5 class="font-semibold text-gray-800 text-sm truncate">Sunflower</h5>
+                                <p class="text-green-600 font-bold text-sm">$12</p>
+                                <div class="flex items-center gap-1 mt-1 text-xs">
+                                    <span class="text-yellow-400">★★★★★</span>
+                                    <span class="text-gray-600">(145)</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        {{-- Product Card 5 --}}
+                        <a href="#" class="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border border-gray-200 cursor-pointer group">
+                            <div class="bg-green-200 h-32 flex items-center justify-center relative overflow-hidden">
+                                <span class="text-4xl group-hover:scale-110 transition">🌹</span>
+                            </div>
+                            <div class="p-3">
+                                <h5 class="font-semibold text-gray-800 text-sm truncate">Rose</h5>
+                                <p class="text-green-600 font-bold text-sm">$20</p>
+                                <div class="flex items-center gap-1 mt-1 text-xs">
+                                    <span class="text-yellow-400">★★★★★</span>
+                                    <span class="text-gray-600">(234)</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @end
+@end
+
+<script>
+    function increaseQty() {
+        const qty = document.getElementById('quantity');
+        qty.value = parseInt(qty.value) + 1;
+    }
+
+    function decreaseQty() {
+        const qty = document.getElementById('quantity');
+        if (parseInt(qty.value) > 1) {
+            qty.value = parseInt(qty.value) - 1;
+        }
+    }
+
+    function addToCartDetail() {
+        const quantity = parseInt(document.getElementById('quantity').value);
+        const product = {
+            name: 'Monstera Deliciosa',
+            price: 25,
+            emoji: '🌿',
+            quantity: quantity
+        };
+
+        // Get existing cart
+        let cart = JSON.parse(sessionStorage.getItem('plantopia_cart') || '[]');
+        
+        // Check if product already exists
+        const existingItem = cart.find(item => item.name === product.name);
+        
+        if (existingItem) {
+            existingItem.quantity += quantity;
+        } else {
+            cart.push(product);
+        }
+
+        // Save cart
+        sessionStorage.setItem('plantopia_cart', JSON.stringify(cart));
+
+        // Show notification
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-40 animate-fade-in';
+        notification.textContent = `Added ${quantity} item(s) to cart!`;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+</script>

@@ -1,0 +1,280 @@
+@layouts.market() 
+    @set('title', 'Market - Home')
+
+    @slot('main')
+        {{-- Searchbar Section --}}
+        <div class="search-container px-4 py-4 bg-white border-b">
+            <form action="/" method="GET" class="max-w-7xl mx-auto">
+                <div class="flex gap-2">
+                    <input 
+                        type="text" 
+                        name="q" 
+                        id="SearchInput" 
+                        placeholder="Search Plant" 
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                        required
+                    />
+                    <button 
+                        type="submit" 
+                        class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                        Search
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        {{-- Promo Banner Section --}}
+        <div class="bg-gradient-to-r from-green-500 to-green-600 text-white py-12 px-4 my-6">
+            <div class="max-w-7xl mx-auto text-center">
+                <h2 class="text-4xl font-bold mb-2">Special Promo!</h2>
+                <p class="text-lg text-green-100 mb-4">Get up to 50% off on selected plants this week</p>
+                <button class="bg-white text-green-600 px-8 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
+                    Shop Now
+                </button>
+            </div>
+        </div>
+
+        {{-- Category Section --}}
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">Categories</h3>
+            <div class="flex gap-3 overflow-x-auto pb-2">
+                <button class="px-6 py-2 border-2 border-green-600 text-green-600 rounded-lg font-semibold hover:bg-green-50 whitespace-nowrap transition">
+                    All
+                </button>
+                <button class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:border-green-600 whitespace-nowrap transition">
+                    Indoor
+                </button>
+                <button class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:border-green-600 whitespace-nowrap transition">
+                    Outdoor
+                </button>
+                <button class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:border-green-600 whitespace-nowrap transition">
+                    Succulents
+                </button>
+                <button class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:border-green-600 whitespace-nowrap transition">
+                    Herbs
+                </button>
+            </div>
+        </div>
+
+        {{-- Best Deal Section --}}
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <h3 class="text-2xl font-bold text-gray-800 mb-2">Best Deal</h3>
+            <p class="text-gray-600 mb-6">Limited time offers - Don't miss out!</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {{-- Product Card 1 --}}
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border border-gray-200">
+                    <div class="bg-green-200 h-48 flex items-center justify-center relative">
+                        <span class="text-6xl">🌿</span>
+                        <span class="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                            -30%
+                        </span>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-semibold text-gray-800 mb-1">Monstera Deliciosa</h4>
+                        <p class="text-sm text-gray-600 mb-3">Beautiful climbing plant</p>
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <span class="text-xl font-bold text-gray-800">$25</span>
+                                <span class="text-sm text-gray-500 line-through ml-2">$35</span>
+                            </div>
+                        </div>
+                        <button 
+                            type="button"
+                            onclick="addToCart('Monstera Deliciosa', 25, '🌿')"
+                            class="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition flex items-center justify-center gap-2"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            </svg>
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Product Card 2 --}}
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border border-gray-200">
+                    <div class="bg-green-200 h-48 flex items-center justify-center relative">
+                        <span class="text-6xl">🌱</span>
+                        <span class="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                            -25%
+                        </span>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-semibold text-gray-800 mb-1">Pothos Golden</h4>
+                        <p class="text-sm text-gray-600 mb-3">Easy to grow vine plant</p>
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <span class="text-xl font-bold text-gray-800">$18</span>
+                                <span class="text-sm text-gray-500 line-through ml-2">$24</span>
+                            </div>
+                        </div>
+                        <button 
+                            type="button"
+                            onclick="addToCart('Pothos Golden', 18, '🌱')"
+                            class="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition flex items-center justify-center gap-2"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            </svg>
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Product Card 3 --}}
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border border-gray-200">
+                    <div class="bg-green-200 h-48 flex items-center justify-center relative">
+                        <span class="text-6xl">🍃</span>
+                        <span class="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                            -40%
+                        </span>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-semibold text-gray-800 mb-1">Snake Plant</h4>
+                        <p class="text-sm text-gray-600 mb-3">Low maintenance air purifier</p>
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <span class="text-xl font-bold text-gray-800">$20</span>
+                                <span class="text-sm text-gray-500 line-through ml-2">$33</span>
+                            </div>
+                        </div>
+                        <button 
+                            type="button"
+                            onclick="addToCart('Snake Plant', 20, '🍃')"
+                            class="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition flex items-center justify-center gap-2"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            </svg>
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Discovery Section --}}
+        <div class="max-w-7xl mx-auto px-4 py-8 mb-8">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">Discover More</h3>
+            
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                {{-- Discovery Card 1 --}}
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border border-gray-200 cursor-pointer">
+                    <div class="bg-green-200 h-32 flex items-center justify-center">
+                        <span class="text-4xl">🌾</span>
+                    </div>
+                    <div class="p-3">
+                        <h5 class="font-semibold text-gray-800 text-sm">Bamboo</h5>
+                        <p class="text-xs text-gray-600">From $15</p>
+                    </div>
+                </div>
+
+                {{-- Discovery Card 2 --}}
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border border-gray-200 cursor-pointer">
+                    <div class="bg-green-200 h-32 flex items-center justify-center">
+                        <span class="text-4xl">🌻</span>
+                    </div>
+                    <div class="p-3">
+                        <h5 class="font-semibold text-gray-800 text-sm">Sunflower</h5>
+                        <p class="text-xs text-gray-600">From $12</p>
+                    </div>
+                </div>
+
+                {{-- Discovery Card 3 --}}
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border border-gray-200 cursor-pointer">
+                    <div class="bg-green-200 h-32 flex items-center justify-center">
+                        <span class="text-4xl">🌹</span>
+                    </div>
+                    <div class="p-3">
+                        <h5 class="font-semibold text-gray-800 text-sm">Rose</h5>
+                        <p class="text-xs text-gray-600">From $20</p>
+                    </div>
+                </div>
+
+                {{-- Discovery Card 4 --}}
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border border-gray-200 cursor-pointer">
+                    <div class="bg-green-200 h-32 flex items-center justify-center">
+                        <span class="text-4xl">🌺</span>
+                    </div>
+                    <div class="p-3">
+                        <h5 class="font-semibold text-gray-800 text-sm">Hibiscus</h5>
+                        <p class="text-xs text-gray-600">From $18</p>
+                    </div>
+                </div>
+
+                {{-- Discovery Card 5 --}}
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border border-gray-200 cursor-pointer">
+                    <div class="bg-green-200 h-32 flex items-center justify-center">
+                        <span class="text-4xl">🌷</span>
+                    </div>
+                    <div class="p-3">
+                        <h5 class="font-semibold text-gray-800 text-sm">Tulip</h5>
+                        <p class="text-xs text-gray-600">From $16</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @end
+@end
+
+<script>
+    let cart = [];
+
+    function addToCart(name, price, emoji) {
+        const existingItem = cart.find(item => item.name === name);
+        
+        if (existingItem) {
+            existingItem.quantity++;
+        } else {
+            cart.push({ name, price, emoji, quantity: 1 });
+        }
+        
+        updateCartBadge();
+        showNotification(`${name} added to cart!`);
+    }
+
+    function removeFromCart(name) {
+        cart = cart.filter(item => item.name !== name);
+        updateCartBadge();
+    }
+
+    function updateCartBadge() {
+        const cartBadge = document.getElementById('cartBadge');
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        
+        if (totalItems === 0) {
+            cartBadge.classList.add('hidden');
+        } else {
+            cartBadge.classList.remove('hidden');
+            cartBadge.textContent = totalItems;
+        }
+
+        // Save cart to sessionStorage
+        sessionStorage.setItem('plantopia_cart', JSON.stringify(cart));
+    }
+
+    function showNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-40 animate-fade-in';
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+
+    // Initialize cart from sessionStorage
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedCart = sessionStorage.getItem('plantopia_cart');
+        if (savedCart) {
+            cart = JSON.parse(savedCart);
+            updateCartBadge();
+        }
+    });
+</script>
