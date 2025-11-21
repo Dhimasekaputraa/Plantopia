@@ -23,3 +23,15 @@ router.group(() => {
   const guest = await import('#middleware/guest_middleware')
   return new guest.default().handle(ctx, next)
 })
+
+// Marketplace
+router.on('/marketplace').render('pages/marketplace/home_market')
+router.on('/checkout').render('pages/marketplace/checkout')
+router.on('/cart').render('pages/marketplace/cart')
+router.on('/product').render('pages/marketplace/product')
+
+// Social Media
+router.on('/socmed').render('pages/social_media/home_socmed')
+
+// Profile
+router.on('/profile').render('pages/profile/profile')
