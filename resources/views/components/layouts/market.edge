@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    @if ($slots.meta)
+        {{{ await $slots.meta() }}}
+    @endif
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plantopia</title>
+    @vite('resources/css/app.css')
+</head>
+<body class="bg-white">
+    {{-- Navbar --}}
+    @if ($slots.header)
+        {{{ await $slots.header() }}}
+    @else
+        <nav class="bg-white shadow-md sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    {{-- Logo --}}
+                    <div class="flex-shrink: 0">
+                        <a href="/" class="flex items-center gap-2">
+                            <img src="/resources/assets/logo/plantopia_dark_logo.png" class="w-16 h-16">
+                            <img src="/resources/assets/logo/plantopia_dark_font_logo.png" class="w-32 h-32">
+                        </a>
+                    </div>
+
+                    {{-- Menu Items --}}
+                    <div class="hidden md:flex items-center gap-8">
+                        <a href="/marketplace" class="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                            </svg>
+                        </a>
+                        <a href="/socmed" class="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+                            </svg>
+                        </a>
+                    </div>
+
+                    {{-- User Buttons --}}
+                    <div class="flex items-center gap-4">
+                        <button onclick="window.location.href='/cart'" class="relative">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                            </svg>
+
+                            <span id="cartBadge" class="hidden absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                        </button>
+                        <a href="/profile" class="textgray-800 px-6 py-2 rounded-lg font-medium hover:text-green-600 transition-colors duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                            </svg>
+
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    @endif
+
+    {{-- Main Content --}}
+    <main class="min-h-screen">
+        {{{ await $slots.main() }}}
+    </main>
+
+    {{-- Footer --}}
+    @if($slots.footer)
+        {{{ await $slots.footer() }}}
+    @else
+        <footer class="bg-gray-900 text-gray-300">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                    {{-- Company Info --}}
+                    <div>
+                        <div class="flex items-center gap-2 mb-4">
+                            <a href="/" class="flex items-center gap-2">
+                                <img src="/resources/assets/logo/plantopia_light_logo.png" class="w-24 h-24">
+                                <img src="/resources/assets/logo/plantopia_light_font_logo.png" class="w-32 h-32">
+                            </a>
+                        </div>
+                        <p class="text-sm text-gray-400">Bringing nature closer to your home with premium plants and care guidance.</p>
+                    </div>
+
+                    {{-- Quick Links --}}
+                    <div>
+                        <h3 class="text-white font-semibold mb-4">Quick Links</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="hover:text-green-400 transition-colors duration-200">Home</a></li>
+                            <li><a href="#" class="hover:text-green-400 transition-colors duration-200">Shop</a></li>
+                            <li><a href="#" class="hover:text-green-400 transition-colors duration-200">About Us</a></li>
+                            <li><a href="#" class="hover:text-green-400 transition-colors duration-200">Blog</a></li>
+                        </ul>
+                    </div>
+
+                    {{-- Support --}}
+                    <div>
+                        <h3 class="text-white font-semibold mb-4">Support</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="hover:text-green-400 transition-colors duration-200">Contact Us</a></li>
+                            <li><a href="#" class="hover:text-green-400 transition-colors duration-200">FAQ</a></li>
+                            <li><a href="#" class="hover:text-green-400 transition-colors duration-200">Shipping Info</a></li>
+                            <li><a href="#" class="hover:text-green-400 transition-colors duration-200">Returns</a></li>
+                        </ul>
+                    </div>
+
+                    {{-- Newsletter --}}
+                    <div>
+                        <h3 class="text-white font-semibold mb-4">Newsletter</h3>
+                        <p class="text-sm text-gray-400 mb-4">Subscribe to get special offers and updates.</p>
+                        <form class="flex flex-col gap-2">
+                            <input type="email" placeholder="Your email" class="px-4 py-2 rounded bg-gray-800 text-white placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-green-600">
+                            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded font-medium hover:bg-green-700 transition-colors duration-200 text-sm">Subscribe</button>
+                        </form>
+                    </div>
+                </div>
+
+                {{-- Divider --}}
+                <div class="border-t border-gray-800 pt-8">
+                    <div class="flex flex-col md:flex-row justify-between items-center">
+                        <p class="text-sm text-gray-400 mb-4 md:mb-0">&copy; 2025 Plantopia. All rights reserved.</p>
+                        <div class="flex gap-6">
+                            <a href="#" class="text-gray-400 hover:text-green-400 transition-colors duration-200">Privacy Policy</a>
+                            <a href="#" class="text-gray-400 hover:text-green-400 transition-colors duration-200">Terms of Service</a>
+                            <a href="#" class="text-gray-400 hover:text-green-400 transition-colors duration-200">Cookie Policy</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    @endif
+
+    @vite('resources/js/app.js')
+</body>
+</html>
