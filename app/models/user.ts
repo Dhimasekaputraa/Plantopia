@@ -14,17 +14,46 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare id: number
 
   @column()
-  declare fullName: string | null
+  declare firstName: string
+
+  @column()
+  declare lastName: string
 
   @column()
   declare email: string
 
+  @column()
+  declare phoneNumbers: string | null
+
   @column({ serializeAs: null })
   declare password: string
+
+  @column()
+  declare profilePicture: string | null
+
+  @column()
+  declare bio: string | null
+
+  @column.dateTime()
+  declare emailVerifiedAt: DateTime | null
+
+  @column.dateTime()
+  declare phoneVerifiedAt: DateTime | null
+
+  @column()
+  declare isActive: boolean
+
+  @column.dateTime()
+  declare lastLoginAt: DateTime | null
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
+
+  // Helper untuk mendapatkan full name
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`
+  }
 }
