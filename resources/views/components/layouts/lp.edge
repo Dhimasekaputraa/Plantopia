@@ -29,12 +29,28 @@
                     <div class="hidden md:flex items-center gap-8">
                         <a href="/about" class="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200">About Us</a>
                         <a href="/contact" class="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200">Contact Us</a>
+                        
+                        {{-- Menu Tambahan Jika Login --}}
+                        @if(auth.isAuthenticated)
+                            <a href="/marketplace" class="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200">Marketplace</a>
+                            <a href="/socmed" class="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200">Community</a>
+                        @endif
                     </div>
 
-                    {{-- Auth Buttons --}}
+                    {{-- Auth/User Buttons --}}
                     <div class="flex items-center gap-4">
-                        <a href="/login" class="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200 hidden md:block">Login</a>
-                        <a href="/register" class="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors duration-200">Register</a>
+                        @if(auth.isAuthenticated)
+                            {{-- Icon Account (Style Marketplace) --}}
+                            <a href="/profile" class="text-gray-800 px-6 py-2 rounded-lg font-medium hover:text-green-600 transition-colors duration-200" title="My Profile">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                                </svg>
+                            </a>
+                        @else
+                            {{-- Tombol Login/Register Jika Belum Login --}}
+                            <a href="/login" class="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200 hidden md:block">Login</a>
+                            <a href="/register" class="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors duration-200">Register</a>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -69,8 +85,8 @@
                         <h3 class="text-white font-semibold mb-4">Quick Links</h3>
                         <ul class="space-y-2 text-sm">
                             <li><a href="#" class="hover:text-green-400 transition-colors duration-200">Home</a></li>
-                            <li><a href="#" class="hover:text-green-400 transition-colors duration-200">Shop</a></li>
-                            <li><a href="#" class="hover:text-green-400 transition-colors duration-200">About Us</a></li>
+                            <li><a href="/marketplace" class="hover:text-green-400 transition-colors duration-200">Shop</a></li>
+                            <li><a href="/about" class="hover:text-green-400 transition-colors duration-200">About Us</a></li>
                             <li><a href="#" class="hover:text-green-400 transition-colors duration-200">Blog</a></li>
                         </ul>
                     </div>
@@ -79,7 +95,7 @@
                     <div>
                         <h3 class="text-white font-semibold mb-4">Support</h3>
                         <ul class="space-y-2 text-sm">
-                            <li><a href="#" class="hover:text-green-400 transition-colors duration-200">Contact Us</a></li>
+                            <li><a href="/contact" class="hover:text-green-400 transition-colors duration-200">Contact Us</a></li>
                             <li><a href="#" class="hover:text-green-400 transition-colors duration-200">FAQ</a></li>
                             <li><a href="#" class="hover:text-green-400 transition-colors duration-200">Shipping Info</a></li>
                             <li><a href="#" class="hover:text-green-400 transition-colors duration-200">Returns</a></li>
