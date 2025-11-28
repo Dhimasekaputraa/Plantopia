@@ -6,7 +6,7 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').notNullable()
-      table.integer('product_id').unsigned().references('id.product').notNullable()
+      table.integer('product_id').unsigned().references('product.id').notNullable()
       table.string('product_image',512).references('product.product_image').notNullable
       table.string('SKU').notNullable
       table.timestamp('created_at')
