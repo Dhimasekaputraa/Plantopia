@@ -11,9 +11,9 @@ export default class extends BaseSchema {
       table.string('street').notNullable()
       table.string('city').notNullable()
       table.string('region').nullable()
-      table.string('country').notNullable()
+      table.integer('country_id').unsigned().references('countries.id').notNullable()
       table.timestamp('created_at').notNullable()
-      table.timestamp('updated_at').nullable
+      table.timestamp('updated_at').nullable()
     })
   }
 
