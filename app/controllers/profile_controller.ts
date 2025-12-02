@@ -1,28 +1,37 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import User from '#models/user'
 import hash from '@adonisjs/core/services/hash'
 import vine from '@vinejs/vine'
+import app from '@adonisjs/core/services/app'
+import { cuid } from '@adonisjs/core/helpers'
 
 export default class ProfileController {
   /**
    * Show user profile
    */
   async show({ auth, view }: HttpContext) {
-    return view.render('pages/profile/profile')
+    const user = auth.user!
+    
+    // Load produk user untuk ditampilkan di profil
+    await user.load('products', (query) => {
+      query.orderBy('createdAt', 'desc').preload('items')
+    })
+
+    return view.render('pages/profile/profile', { user })
   }
 
   /**
    * Show settings page
    */
-  async settings({ auth, view }: HttpContext) {
+  async settings({ view }: HttpContext) {
     return view.render('pages/profile/settings')
   }
 
   /**
-   * Update profile information
+   * Update profile information (TERMASUK FOTO)
    */
   async update({ auth, request, response, session }: HttpContext) {
     try {
+      // 1. Validasi Input Data Teks
       const schema = vine.object({
         firstName: vine.string().trim().minLength(2).maxLength(100),
         lastName: vine.string().trim().minLength(2).maxLength(100),
@@ -38,6 +47,29 @@ export default class ProfileController {
       user.lastName = data.lastName
       user.phoneNumbers = data.phoneNumbers ?? null
       user.bio = data.bio ?? null
+
+      // 2. LOGIKA UPLOAD FOTO PROFIL (BARU)
+      const avatar = request.file('avatar', {
+        size: '2mb',
+        extnames: ['jpg', 'png', 'jpeg', 'webp'],
+      })
+
+      if (avatar) {
+        if (!avatar.isValid) {
+          session.flash('error', 'Invalid image file (Max 2MB, JPG/PNG only)')
+          return response.redirect().back()
+        }
+
+        // Simpan file dengan nama acak
+        const fileName = `${cuid()}.${avatar.extname}`
+        await avatar.move(app.makePath('resources/uploads/avatars'), {
+          name: fileName
+        })
+
+        // Simpan path ke database
+        user.profilePicture = `resources/uploads/avatars/${fileName}`
+      }
+      
       await user.save()
 
       session.flash('success', 'Profile updated successfully!')
@@ -118,5 +150,20 @@ export default class ProfileController {
       session.flash('error', 'Failed to delete account')
       return response.redirect().back()
     }
+  }
+
+  /**
+   * Toggle Seller Mode
+   */
+  async toggleSellerMode({ auth, response, session }: HttpContext) {
+    const user = auth.user!
+    
+    user.isSeller = !user.isSeller
+    await user.save()
+
+    const status = user.isSeller ? 'Activated (Seller)' : 'Deactivated (Buyer)'
+    
+    session.flash('success', `Seller Mode ${status}`)
+    return response.redirect().back()
   }
 }
