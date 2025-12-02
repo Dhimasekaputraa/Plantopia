@@ -1,25 +1,33 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import User from '#models/user'
 import hash from '@adonisjs/core/services/hash'
 import vine from '@vinejs/vine'
+// import User from '#models/user' // Tidak wajib di-import jika kita pakai auth.user, tapi boleh ada.
 
 export default class ProfileController {
   /**
-   * Show user profile
+   * 1. Show user profile (DENGAN DATA PRODUK)
    */
   async show({ auth, view }: HttpContext) {
-    return view.render('pages/profile/profile')
+    const user = auth.user!
+
+    // PRELOAD: Ambil data produk milik user ini dari database
+    // Kita urutkan dari yang paling baru (desc) dan ambil info harganya (items)
+    await user.load('products', (query) => {
+      query.orderBy('createdAt', 'desc').preload('items')
+    })
+
+    return view.render('pages/profile/profile', { user })
   }
 
   /**
-   * Show settings page
+   * 2. Show settings page
    */
-  async settings({ auth, view }: HttpContext) {
+  async settings({ view }: HttpContext) {
     return view.render('pages/profile/settings')
   }
 
   /**
-   * Update profile information
+   * 3. Update profile information
    */
   async update({ auth, request, response, session }: HttpContext) {
     try {
@@ -38,6 +46,10 @@ export default class ProfileController {
       user.lastName = data.lastName
       user.phoneNumbers = data.phoneNumbers ?? null
       user.bio = data.bio ?? null
+      
+      // Jika ada upload foto profil, tambahkan logika di sini (opsional)
+      // const image = request.file('avatar') ...
+      
       await user.save()
 
       session.flash('success', 'Profile updated successfully!')
@@ -53,7 +65,7 @@ export default class ProfileController {
   }
 
   /**
-   * Change password
+   * 4. Change password
    */
   async changePassword({ auth, request, response, session }: HttpContext) {
     try {
@@ -92,7 +104,7 @@ export default class ProfileController {
   }
 
   /**
-   * Delete account
+   * 5. Delete account
    */
   async delete({ auth, request, response, session }: HttpContext) {
     try {
@@ -118,5 +130,21 @@ export default class ProfileController {
       session.flash('error', 'Failed to delete account')
       return response.redirect().back()
     }
+  }
+
+  /**
+   * 6. FITUR BARU: Toggle Seller Mode
+   */
+  async toggleSellerMode({ auth, response, session }: HttpContext) {
+    const user = auth.user!
+    
+    // Ubah status (True <-> False)
+    user.isSeller = !user.isSeller
+    await user.save()
+
+    const status = user.isSeller ? 'Activated (Seller)' : 'Deactivated (Buyer)'
+    
+    session.flash('success', `Seller Mode ${status}`)
+    return response.redirect().back()
   }
 }
