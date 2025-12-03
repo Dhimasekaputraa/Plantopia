@@ -167,9 +167,26 @@
                                 </div>
                             </div>
 
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Region</label>
+                                    <input type="text" name="region" class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" required>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Country</label>
+                                    <select name="countryId" class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" required>
+                                        <option value="">Select a country</option>
+                                        @each(country in countries)
+                                            <option value="{{ country.id }}">{{ country.name }}</option>
+                                        @endeach
+                                    </select>
+                                </div>
+                            </div>
+
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Region</label>
-                                <input type="text" name="region" class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" required>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Unit Number (Optional)</label>
+                                <input type="text" name="unitNumber" placeholder="e.g., Apt 5B, Unit 201" class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
                             </div>
 
                             <button 
