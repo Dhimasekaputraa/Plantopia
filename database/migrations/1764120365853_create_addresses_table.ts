@@ -6,11 +6,11 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').notNullable()
-      table.integer('user_id').unsigned()
-      table.integer('unit_number').unsigned().notNullable()
+      // table.integer('user_id').unsigned()
+      table.string('unit_number').unsigned().nullable() //rollback -> integer .unsigned().notNullable()
       table.string('street').notNullable()
       table.string('city').notNullable()
-      table.string('region').nullable()
+      table.string('region').notNullable() //rollback -> .nullable()
       table.integer('country_id').unsigned().references('countries.id').notNullable()
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()
