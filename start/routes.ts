@@ -9,6 +9,7 @@ const SellerProductController = () => import('#controllers/seller_products_contr
 const PostsController = () => import('#controllers/posts_controller')
 const HomeController = () => import('#controllers/home_controller') 
 const LikesController = () => import('#controllers/likes_controller') // <-- TAMBAHKAN INI
+const CommentsController = () => import('#controllers/comments_controller')
 
 // --- PUBLIC ROUTES (Landing Page) ---
 router.on('/').render('pages/landing_page/lp').as('home')
@@ -80,9 +81,9 @@ router.group(() => {
  // ROUTE BARU: Like/Unlike Post
  router.post('/posts/:postId/like', [LikesController, 'toggleLike']).as('posts.like') // <-- TAMBAHKAN INI
 
-  //Address Routes
-  router.post('/profile/add-address', [ProfileController, 'addAddress']).as('profile.add_address')
-  router.post('/profile/delete-address/:id', [ProfileController, 'deleteAddress']).as('profile.delete_address')
-  router.post('/profile/set-default-address/:id', [ProfileController, 'setDefaultAddress']).as('profile.set_default_address')
+ //Address Routes
+ router.post('/profile/add-address', [ProfileController, 'addAddress']).as('profile.add_address')
+ router.post('/profile/delete-address/:id', [ProfileController, 'deleteAddress']).as('profile.delete_address')
+ router.post('/profile/set-default-address/:id', [ProfileController, 'setDefaultAddress']).as('profile.set_default_address')
 
 }).middleware(middleware.auth())

@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import hash from '@adonisjs/core/services/hash'
 import { compose } from '@adonisjs/core/helpers'
-import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm' // <--- (1) Tambah hasMany
+import { BaseModel, column, hasMany, computed } from '@adonisjs/lucid/orm' // <--- (1) Tambah hasMany
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import type { HasMany } from '@adonisjs/lucid/types/relations' // <--- (2) Tambah ini
 import Product from '#models/product' // <--- (3) Tambah ini
@@ -80,6 +80,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @hasMany(() => Like)
   declare likes: HasMany<typeof Like>
 
+  @computed()
   get fullName() {
     // 1. Prioritaskan nilai dari kolom 'full_name' di DB
     if (this.fullNameDb) {

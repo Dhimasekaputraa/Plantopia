@@ -11,7 +11,12 @@ export default class HomeController {
 
     const posts = await Post.query()
       .preload('user')
-      .withCount('likes') 
+      .withCount('likes')
+      .withCount('comments')
+      .preload('comments', (commentQuery) => {
+        // Load 5 komentar terbaru + user-nya
+        commentQuery.preload('user').orderBy('createdAt', 'desc').limit(5) 
+      }) 
       .preload('likes', (query) => { 
         if (userId) {
           query.where('userId', userId)
@@ -23,20 +28,32 @@ export default class HomeController {
       .limit(20) 
 
     const finalPosts = posts.map(post => {
+        // Ambil objek JSON mentah
         const postObj = post.toJSON() 
         const createdAtLuxon = DateTime.fromISO(postObj.createdAt)
         
-        // *** PERBAIKAN NAMA USER: Pastikan fullName terbawa ***
+        // 🟢 KRUSIAL 1: Memaksa `fullName` pada user Post
         if (postObj.user && post.user) {
             // Ambil fullName dari getter Model dan masukkan ke object JSON
             postObj.user.fullName = post.user.fullName
         }
-        // ******************************************************
+
+        // 🟢 KRUSIAL 2: Memaksa `fullName` pada setiap User Komentar
+        // PERBAIKAN: Menambahkan Type Annotation (commentObj: any, index: number)
+        postObj.comments.forEach((commentObj: any, index: number) => {
+            // Akses Model Komentar asli untuk mendapatkan Model User yang sudah di-preload
+            const originalComment = post.comments[index] 
+            if (commentObj.user && originalComment.user) {
+                // Ambil fullName dari getter Model User dan masukkan ke objek JSON Komentar
+                commentObj.user.fullName = originalComment.user.fullName
+            }
+        })
         
         return {
             ...postObj, 
             isLikedByCurrentUser: post.likes.length > 0,
             totalLikes: post.$extras.likes_count,
+            totalComments: post.$extras.comments_count,
             relativeTime: createdAtLuxon.toRelative(), 
         }
     })
