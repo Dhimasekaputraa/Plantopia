@@ -5,6 +5,7 @@ import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 // Import model User. Pastikan path ini sesuai dengan struktur folder Anda.
 import User from '#models/user'
 import Like from '#models/like'
+import Comment from '#models/comment'
 
 export default class Post extends BaseModel {
   protected static fillable = ['userId', 'image', 'content']
@@ -33,5 +34,8 @@ export default class Post extends BaseModel {
   
   @hasMany(() => Like)
   declare likes: HasMany<typeof Like>
+
+  @hasMany(() => Comment)
+  declare comments: HasMany<typeof Comment>
   
 }
