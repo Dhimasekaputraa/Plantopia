@@ -5,6 +5,9 @@ import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm' // <--- (1) Tam
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import type { HasMany } from '@adonisjs/lucid/types/relations' // <--- (2) Tambah ini
 import Product from '#models/product' // <--- (3) Tambah ini
+import Post from '#models/post'
+import Comment from '#models/comment' // <--- (4) Tambah ini
+import Like from '#models/like'       // <--- (5) Tambah ini
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -20,6 +23,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @column()
   declare lastName: string
+
+  @column({ columnName: 'full_name' }) 
+  declare fullNameDb: string | null
 
   @column()
   declare email: string
@@ -62,7 +68,29 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare products: HasMany<typeof Product>
   // ----------------------------------------
 
+  // --- RELASI: User punya banyak Post ---
+  @hasMany(() => Post)
+  declare posts: HasMany<typeof Post>
+
+  // Seorang User memiliki banyak Comment
+  @hasMany(() => Comment)
+  declare comments: HasMany<typeof Comment>
+
+  // Seorang User memberikan banyak Like
+  @hasMany(() => Like)
+  declare likes: HasMany<typeof Like>
+
   get fullName() {
-    return `${this.firstName} ${this.lastName}`
+    // 1. Prioritaskan nilai dari kolom 'full_name' di DB
+    if (this.fullNameDb) {
+      return this.fullNameDb 
+    }
+    // 2. Fallback jika kolom 'full_name' null/kosong, gabungkan firstName dan lastName
+    if (this.firstName && this.lastName) {
+      return `${this.firstName} ${this.lastName}`
+    }
+    
+    return 'Anonymous User' 
   }
+  
 }

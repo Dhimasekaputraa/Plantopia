@@ -11,187 +11,160 @@
 
             <div class="max-w-2xl mx-auto px-4 py-6">
                 
-                {{-- Create Post Section --}}
+                {{-- Create Post Section (FORM DYNAMIC) --}}
                 <div class="bg-white rounded-lg shadow-md p-6 mb-6 border border-gray-200">
-                    <div class="flex gap-4 mb-4">
-                        <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-600">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15a7.488 7.488 0 0 0-5.982 3.725m11.964 0a9 9 0 1 0-11.928 0" />
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <textarea 
-                                placeholder="What are you thinking?" 
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-green-600"
-                                rows="3"
-                            ></textarea>
-                            <div class="flex justify-between items-center mt-4">
-                                <div class="flex gap-3">
-                                    <button class="border border-gray-300 px-2 py-2  rounded-lg text-gray-600 hover:text-green-600 transition">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
+                    {{-- Form untuk membuat Post baru. Wajib enctype="multipart/form-data" --}}
+                    <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
+                        {{ csrfField() }} 
+
+                        {{-- Menampilkan Flash Messages atau Errors dari Redirect --}}
+                        @if(flashMessages.has('errors'))
+                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                                @each(error in flashMessages.get('errors'))
+                                    <p>{{ error.message }}</p>
+                                @endeach
+                            </div>
+                        @endif
+                        @if(flashMessages.has('notification'))
+                            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                                <p>{{ flashMessages.get('notification') }}</p>
+                            </div>
+                        @endif
+
+                        <div class="flex gap-4 mb-4">
+                            {{-- User Avatar (Menggunakan data user yang sedang login) --}}
+                            <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                @if(auth.user && auth.user.profilePicture)
+                                    <img src="{{ asset(auth.user.profilePicture) }}" alt="{{ auth.user.fullName }}" class="w-full h-full object-cover rounded-full">
+                                @else
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-600">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15a7.488 7.488 0 0 0-5.982 3.725m11.964 0a9 9 0 1 0-11.928 0" />
+                                    </svg>
+                                @endif
+                            </div>
+                            
+                            <div class="flex-1">
+                                <textarea 
+                                    name="content" {{-- Input Content --}}
+                                    placeholder="What are you thinking? Write here..." 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-green-600"
+                                    rows="3"
+                                >{{ flashMessages.get('content') || '' }}</textarea>
+                                
+                                <div class="flex justify-between items-center mt-4">
+                                    <div class="flex gap-3">
+                                        {{-- File Upload Button --}}
+                                        <label for="image-upload" class="border border-gray-300 px-2 py-2 rounded-lg text-gray-600 hover:text-green-600 transition cursor-pointer" title="Upload Image">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.58 2.58m-8.948-9.354L15.3 12m0 0 4.2 4.2M12 21h6.75a2.25 2.25 0 0 0 2.25-2.25V5.25a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 5.25v13.5A2.25 2.25 0 0 0 5.25 21h6.75" />
+                                            </svg>
+                                            {{-- Input file tersembunyi --}}
+                                            <input type="file" name="image" id="image-upload" class="hidden" accept="image/jpeg,image/png,image/webp">
+                                        </label>
+                                        <span id="file-name" class="text-gray-500 text-sm py-2 self-center"></span>
+                                    </div>
+                                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
                                         </svg>
+                                        Post
                                     </button>
                                 </div>
-                                <button class="bg-green-600 text-white px-2 py-2 rounded-lg font-semibold hover:bg-green-700 transition">
-                                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
-                                    </svg>
-
-                                </button>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
 
-                {{-- Posts Feed --}}
+                {{-- Posts Feed (LOOPING DATA DARI CONTROLLER) --}}
                 <div class="space-y-6">
-                    
-                    {{-- Post 1 --}}
-                    <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-                        {{-- Post Header --}}
-                        <div class="p-4 flex justify-between items-start">
-                            <div class="flex gap-3 flex-1">
-                                <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <span class="text-lg">👤</span>
+                    @if(posts && posts.length)
+                        {{-- LOOPING DATA POSTS --}}
+                        @each(post in posts)
+                            <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden" data-post-id="{{ post.id }}">
+                                {{-- Post Header --}}
+                                <div class="p-4 flex justify-between items-start">
+                                    <div class="flex gap-3 flex-1">
+                                        {{-- User Avatar --}}
+                                        <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                            @if(post.user.profilePicture)
+                                                <img src="{{ asset(post.user.profilePicture) }}" alt="{{ post.user.fullName }}" class="w-full h-full object-cover">
+                                            @else
+                                                <span class="text-lg">👤</span>
+                                            @endif
+                                        </div>
+                                        <div class="flex-1">
+                                            {{-- Nama User --}}
+                                            <h3 class="font-semibold text-gray-800">{{ post.user.fullName }}</h3> 
+                                            {{-- Waktu Post (Menggunakan Luxon.toRelative() - Pastikan Luxon sudah terinstall) --}}
+                                            <p 
+                                                class="text-xs text-gray-500">
+                                                Posted {{ post.relativeTime }} 
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {{-- Post Menu (Dropdown Edit/Delete) --}}
+                                    @if(auth.user && auth.user.id === post.userId)
+                                        <button class="text-gray-500 hover:text-gray-700">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
+                                                <path d="M12 3a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM12 9a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM12 15a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                                            </svg>
+                                        </button>
+                                    @endif
                                 </div>
-                                <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-800">Username</h3>
-                                    <p class="text-xs text-gray-500">Posted 2 hours ago</p>
+
+                                {{-- Post Content --}}
+                                <div class="px-4 pb-4">
+                                    <p class="text-gray-800 mb-3">{{ post.content }}</p>
                                 </div>
-                            </div>
-                            <button class="text-gray-500 hover:text-gray-700">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
-                                    <path d="M12 3a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM12 9a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM12 15a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
-                                </svg>
-                            </button>
-                        </div>
 
-                        {{-- Post Content --}}
-                        <div class="px-4 pb-4">
-                            <p class="text-gray-800 mb-3">Just propagated my monstera! Can't wait to see it grow 🌿</p>
-                        </div>
+                                {{-- Post Images --}}
+                                @if(post.image)
+                                    <div class="bg-gray-100 flex items-center justify-center">
+                                        <img src="{{ asset(post.image) }}" alt="Post image by {{ post.user.fullName }}" class="w-full h-auto object-cover max-h-96">
+                                    </div>
+                                @endif
 
-                        {{-- Post Images --}}
-                        <div class="bg-gray-100 h-64 flex items-center justify-center text-6xl">
-                            🌿
-                        </div>
+                                {{-- Post Actions (Like & Comment Placeholder) --}}
+                                <div class="p-4 border-t border-gray-200">
+                                    <div class="flex gap-6 mb-4 text-gray-600 text-sm">
+                                        
+                                        {{-- Like Button (IMPLEMENTASI DENGAN DATA) --}}
+                                        <button 
+                                            class="like-button flex items-center gap-2 transition group {{ post.isLikedByCurrentUser ? 'text-red-600 hover:text-red-700' : 'hover:text-red-600' }}"
+                                            data-post-id="{{ post.id }}"
+                                            data-is-liked="{{ post.isLikedByCurrentUser ? 'true' : 'false' }}"
+                                            title="{{ post.isLikedByCurrentUser ? 'Unlike' : 'Like' }}"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" 
+                                                fill="{{ post.isLikedByCurrentUser ? 'currentColor' : 'none' }}" 
+                                                viewBox="0 0 24 24" 
+                                                stroke-width="1.5" 
+                                                stroke="currentColor" 
+                                                class="size-6 transition-colors"
+                                            >
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                                            </svg>
+                                            <span class="like-count" id="like-count-{{ post.id }}">{{ post.totalLikes }}</span>
+                                        </button>
 
-                        {{-- Post Actions --}}
-                        <div class="p-4 border-t border-gray-200">
-                            <div class="flex gap-6 mb-4 text-gray-600 text-sm">
-                                <button class="flex items-center gap-2 hover:text-red-600 transition group">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                                    </svg>
-                                    <span>100</span>
-                                </button>
-                                <button class="flex items-center gap-2 hover:text-green-600 transition">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z" />
-                                    </svg>
-                                    <span>8</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Post 2 --}}
-                    <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-                        {{-- Post Header --}}
-                        <div class="p-4 flex justify-between items-start">
-                            <div class="flex gap-3 flex-1">
-                                <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <span class="text-lg">👤</span>
-                                </div>
-                                <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-800">Username</h3>
-                                    <p class="text-xs text-gray-500">Posted 5 hours ago</p>
-                                </div>
-                            </div>
-                            <button class="text-gray-500 hover:text-gray-700">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
-                                    <path d="M12 3a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM12 9a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM12 15a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
-                                </svg>
-                            </button>
-                        </div>
-
-                        {{-- Post Content --}}
-                        <div class="px-4 pb-4">
-                            <p class="text-gray-800 mb-3">My succulents are thriving in this new pot! Any tips for watering? 🌵</p>
-                        </div>
-
-                        {{-- Post Images Grid --}}
-                        <div class="grid grid-cols-2 gap-2 bg-gray-100 p-2">
-                            <div class="bg-gray-200 h-32 flex items-center justify-center text-4xl">🌱</div>
-                            <div class="bg-gray-200 h-32 flex items-center justify-center text-4xl">🌱</div>
-                            <div class="bg-gray-200 h-32 flex items-center justify-center text-4xl">🌱</div>
-                            <div class="bg-gray-200 h-32 flex items-center justify-center text-4xl">🌱</div>
-                        </div>
-
-                        {{-- Post Actions --}}
-                        <div class="p-4 border-t border-gray-200">
-                            <div class="flex gap-6 mb-4 text-gray-600 text-sm">
-                                <button class="flex items-center gap-2 hover:text-red-600 transition group">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                                    </svg>
-                                    <span>156</span>
-                                </button>
-                                <button class="flex items-center gap-2 hover:text-green-600 transition">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z" />
-                                    </svg>
-                                    <span>32</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Post 3 --}}
-                    <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-                        {{-- Post Header --}}
-                        <div class="p-4 flex justify-between items-start">
-                            <div class="flex gap-3 flex-1">
-                                <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <span class="text-lg">👤</span>
-                                </div>
-                                <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-800">Username</h3>
-                                    <p class="text-xs text-gray-500">Posted 1 day ago</p>
+                                        {{-- Comment Button (Placeholder) --}}
+                                        <button class="flex items-center gap-2 hover:text-green-600 transition">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z" />
+                                            </svg>
+                                            <span>0</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <button class="text-gray-500 hover:text-gray-700">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
-                                    <path d="M12 3a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM12 9a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM12 15a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
-                                </svg>
-                            </button>
+                        @endeach
+                    @else
+                        {{-- Empty State --}}
+                        <div class="text-center py-12 text-gray-500">
+                            <p class="text-lg mb-2">Belum ada Post yang tersedia.</p>
+                            <p>Jadilah yang pertama untuk membagikan pengalaman bertanam Anda! 🌿</p>
                         </div>
-
-                        {{-- Post Content --}}
-                        <div class="px-4 pb-4">
-                            <p class="text-gray-800 mb-3">Looking for recommendations for low-light plants for my apartment. Any suggestions? 💡</p>
-                        </div>
-
-                        {{-- Post Actions --}}
-                        <div class="p-4 border-t border-gray-200">
-                            <div class="flex gap-6 text-gray-600 text-sm">
-                                <button class="flex items-center gap-2 hover:text-red-600 transition group">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                                    </svg>
-                                    <span>45</span>
-                                </button>
-                                <button class="flex items-center gap-2 hover:text-green-600 transition">
-                                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z" />
-                                    </svg>
-                                    <span>12</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
+                    @endif
                 </div>
 
                 {{-- Load More --}}
@@ -203,5 +176,102 @@
 
             </div>
         </div>
+        
+        {{-- SCRIPT: Menampilkan nama file yang di-upload --}}
+        <script>
+            const fileInput = document.getElementById('image-upload')
+            const fileNameDisplay = document.getElementById('file-name')
+
+            fileInput.addEventListener('change', (event) => {
+                if (event.target.files.length > 0) {
+                    fileNameDisplay.textContent = event.target.files[0].name
+                } else {
+                    fileNameDisplay.textContent = ''
+                }
+            })
+            // --- SCRIPT UNTUK FITUR LIKE (DIPERBAIKI) ---
+            // --- SCRIPT UNTUK FITUR LIKE (DIPERBAIKI) ---
+            document.addEventListener('DOMContentLoaded', () => { 
+                
+                function getCsrfToken() {
+                    const metaTag = document.querySelector('meta[name="csrf-token"]')
+                    return metaTag ? metaTag.content : ''
+                }
+
+                document.querySelectorAll('.like-button').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        
+                        const postId = button.dataset.postId
+                        // Pastikan Anda sudah membuat Route POST /posts/:postId/like
+                        const url = `/posts/${postId}/like`; 
+                        const csrfToken = getCsrfToken(); 
+
+                        if (!csrfToken) {
+                            console.error("CSRF Token tidak ditemukan.");
+                            alert('Aksi tidak dapat dilakukan. Token keamanan hilang.');
+                            return;
+                        }
+
+                        try {
+                            const response = await fetch(url, {
+                                method: 'POST', 
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken 
+                                }
+                            })
+                            
+                            if (!response.ok) {
+                                let errorMessage = 'Terjadi kesalahan saat menghubungi server.';
+                                
+                                try {
+                                    const error = await response.json();
+                                    if (error && error.message) {
+                                        errorMessage = error.message; 
+                                    }
+                                } catch (e) {
+                                    errorMessage += ` Status: ${response.status} ${response.statusText}`;
+                                }
+                                
+                                alert(errorMessage);
+                                return;
+                            }
+
+                            const data = await response.json() // { isLiked: boolean, totalLikes: number }
+
+                            // 1. Update Jumlah Like
+                            const countElement = document.getElementById(`like-count-${postId}`)
+                            countElement.textContent = data.totalLikes
+                            
+                            // 2. Update Tombol (Warna dan Data Attribute)
+                            button.dataset.isLiked = data.isLiked ? 'true' : 'false'
+                            const heartSvg = button.querySelector('svg');
+
+                            if (data.isLiked) {
+                                // Jika berhasil Like
+                                button.classList.add('text-red-600', 'hover:text-red-700')
+                                button.classList.remove('hover:text-red-600')
+                                heartSvg.setAttribute('fill', 'currentColor')
+                                button.setAttribute('title', 'Unlike')
+
+                            } else {
+                                // Jika berhasil Unlike
+                                button.classList.add('hover:text-red-600')
+                                button.classList.remove('text-red-600', 'hover:text-red-700')
+                                heartSvg.setAttribute('fill', 'none')
+                                button.setAttribute('title', 'Like')
+                            }
+
+                        } catch (error) {
+                            console.error('Error saat men-toggle like (Network/Unhandled):', error)
+                            alert('Terjadi kesalahan koneksi atau kesalahan tak terduga.');
+                        }
+                    })
+                })
+
+            })
+            // --- AKHIR SCRIPT FITUR LIKE ---/ <--- Akhir document.addEventListener
+        </script>
     @end
 @end
