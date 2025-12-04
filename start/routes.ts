@@ -30,6 +30,11 @@ router.group(() => {
   router.post('/profile/update', [ProfileController, 'update']).as('profile.update')
   router.post('/profile/password', [ProfileController, 'changePassword']).as('profile.password')
   router.post('/profile/delete', [ProfileController, 'delete']).as('profile.delete')
+
+  //Address Routes
+  router.post('/profile/add-address', [ProfileController, 'addAddress']).as('profile.add_address')
+  router.post('/profile/delete-address/:id', [ProfileController, 'deleteAddress']).as('profile.delete_address')
+  router.post('/profile/set-default-address/:id', [ProfileController, 'setDefaultAddress']).as('profile.set_default_address')
   
   // ROUTE BARU: Toggle Seller Mode
   router.post('/profile/toggle-seller', [ProfileController, 'toggleSellerMode']).as('profile.toggleSeller')
