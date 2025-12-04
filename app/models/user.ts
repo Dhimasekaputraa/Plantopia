@@ -8,6 +8,9 @@ import Product from '#models/product' // <--- (3) Tambah ini
 import Post from '#models/post'
 import Comment from '#models/comment' // <--- (4) Tambah ini
 import Like from '#models/like'       // <--- (5) Tambah ini
+import ShoppingCart from '#models/shopping_cart' // <-- Import ini
+import type { HasOne } from '@adonisjs/lucid/types/relations' // <-- Pastikan HasOne diimport
+import { hasOne } from '@adonisjs/lucid/orm'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -79,6 +82,10 @@ export default class User extends compose(BaseModel, AuthFinder) {
   // Seorang User memberikan banyak Like
   @hasMany(() => Like)
   declare likes: HasMany<typeof Like>
+
+  @hasOne(() => ShoppingCart)
+  declare shoppingCart: HasOne<typeof ShoppingCart>
+
 
   @computed()
   get fullName() {
