@@ -1,8 +1,13 @@
 import type { HttpContext } from '@adonisjs/core/http'
+import User from '#models/user'
+import Address from '#models/address'
+import UserAddress from '#models/user_address'
+import Country from '#models/country'
 import hash from '@adonisjs/core/services/hash'
 import vine from '@vinejs/vine'
 import app from '@adonisjs/core/services/app'
 import { cuid } from '@adonisjs/core/helpers'
+import db from '@adonisjs/lucid/services/db'
 
 export default class ProfileController {
   /**
@@ -22,8 +27,136 @@ export default class ProfileController {
   /**
    * Show settings page
    */
-  async settings({ view }: HttpContext) {
-    return view.render('pages/profile/settings')
+  async settings({ auth, view }: HttpContext) { //rollback : remove auth
+    const user = auth.user! // rollback : return view.render('pages/profile/settings')
+
+    const countries = await Country.all()
+
+    const userAddresses = await UserAddress.query()
+    .where('user_id', user.id)
+    .preload('address', (query) => {
+      query.preload('country')
+    })
+    .orderBy('is_default', 'desc')
+
+  return view.render('pages/profile/settings', { 
+    user,
+    userAddresses,
+    countries: countries
+  })
+  }
+
+
+  /**
+   * Add address
+   */
+  async addAddress({ auth, request, response, session }: HttpContext) {
+    const trx = await db.transaction()
+    
+    try {
+      const schema = vine.object({
+        unitNumber: vine.string().trim().optional(),
+        street: vine.string().trim().minLength(5),
+        city: vine.string().trim().minLength(2),
+        region: vine.string().trim().minLength(2),
+        countryId: vine.number().withoutDecimals(),
+        isDefault: vine.boolean().optional(),
+      })
+
+      const validator = vine.compile(schema)
+      const data = await request.validateUsing(validator)
+
+      // Jika isDefault = true, set semua address lain jadi false
+      if (data.isDefault) {
+        await UserAddress.query({ client: trx })
+          .where('user_id', auth.user!.id)
+          .update({ isDefault: false })
+      }
+
+      // Create address
+      const address = await Address.create({
+        unitNumber: data.unitNumber,
+        street: data.street,
+        city: data.city,
+        region: data.region,
+        countryId: data.countryId,
+      }, { client: trx })
+
+      // Link to user
+      await UserAddress.create({
+        userId: auth.user!.id,
+        addressId: address.id,
+        isDefault: data.isDefault || false,
+      }, { client: trx })
+
+      await trx.commit()
+
+      session.flash('success', 'Address added successfully!')
+      return response.redirect().back()
+    } catch (error) {
+      await trx.rollback()
+      
+      if (error.messages) {
+        session.flash('errors', error.messages)
+      } else {
+        session.flash('error', 'Failed to add address')
+      }
+      return response.redirect().back()
+    }
+  }
+
+  /**
+   * Delete address
+   */
+  async deleteAddress({ auth, params, response, session }: HttpContext) {
+    try {
+      const userAddress = await UserAddress.query()
+        .where('id', params.id)
+        .where('user_id', auth.user!.id)
+        .preload('address')
+        .first()
+
+      if (!userAddress) {
+        session.flash('error', 'Address not found')
+        return response.redirect().back()
+      }
+
+      // Delete pivot first
+      await userAddress.delete()
+      
+      // Delete address
+      await userAddress.address.delete()
+
+      session.flash('success', 'Address deleted successfully!')
+      return response.redirect().back()
+    } catch (error) {
+      session.flash('error', 'Failed to delete address')
+      return response.redirect().back()
+    }
+  }
+
+  /**
+   * Set default address
+   */
+  async setDefaultAddress({ auth, params, response, session }: HttpContext) {
+    try {
+      // Set all to false
+      await UserAddress.query()
+        .where('user_id', auth.user!.id)
+        .update({ isDefault: false })
+
+      // Set selected to true
+      await UserAddress.query()
+        .where('id', params.id)
+        .where('user_id', auth.user!.id)
+        .update({ isDefault: true })
+
+      session.flash('success', 'Default address updated!')
+      return response.redirect().back()
+    } catch (error) {
+      session.flash('error', 'Failed to update default address')
+      return response.redirect().back()
+    }
   }
 
   /**
