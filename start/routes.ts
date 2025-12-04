@@ -81,13 +81,9 @@ router.group(() => {
  // ROUTE BARU: Like/Unlike Post
  router.post('/posts/:postId/like', [LikesController, 'toggleLike']).as('posts.like') // <-- TAMBAHKAN INI
 
- // --- 7. SOCIAL MEDIA COMMENT MANAGEMENT ---
- // POST /comments: Membuat komentar baru
- router.post('/comments', [CommentsController, 'store']).as('comments.store') // <-- TAMBAHKAN INI
-
  //Address Routes
-  router.post('/profile/add-address', [ProfileController, 'addAddress']).as('profile.add_address')
-  router.post('/profile/delete-address/:id', [ProfileController, 'deleteAddress']).as('profile.delete_address')
-  router.post('/profile/set-default-address/:id', [ProfileController, 'setDefaultAddress']).as('profile.set_default_address')
+ router.post('/profile/add-address', [ProfileController, 'addAddress']).as('profile.add_address')
+ router.post('/profile/delete-address/:id', [ProfileController, 'deleteAddress']).as('profile.delete_address')
+ router.post('/profile/set-default-address/:id', [ProfileController, 'setDefaultAddress']).as('profile.set_default_address')
 
 }).middleware(middleware.auth())
