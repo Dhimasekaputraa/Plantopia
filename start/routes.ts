@@ -81,6 +81,9 @@ router.group(() => {
  // ROUTE BARU: Like/Unlike Post
  router.post('/posts/:postId/like', [LikesController, 'toggleLike']).as('posts.like') // <-- TAMBAHKAN INI
 
+ // ROUTE BARU: Menambahkan Komentar pada Post
+ router.post('/comments', [CommentsController, 'store']).as('comments.store') // <-- TAMBAHKAN INI
+
  //Address Routes
  router.post('/profile/add-address', [ProfileController, 'addAddress']).as('profile.add_address')
  router.post('/profile/delete-address/:id', [ProfileController, 'deleteAddress']).as('profile.delete_address')
