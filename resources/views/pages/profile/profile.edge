@@ -1,10 +1,11 @@
+{{-- Gunakan Header Market tapi sembunyikan keranjang (Konsisten dengan Community) --}}
 @layouts.market({ hideCart: true })
     @set('title', auth.user.fullName + ' - Profile')
 
     @slot('main')
         <div class="bg-gray-50 min-h-screen">
             
-            {{-- 1. HEADER PROFIL (Desain Awal yang Rapi) --}}
+            {{-- 1. HEADER PROFIL --}}
             <div class="bg-white border-b border-gray-200">
                 <div class="max-w-4xl mx-auto px-4 py-10">
                     <div class="flex flex-col md:flex-row gap-8 items-center">
@@ -23,7 +24,7 @@
                             <h1 class="text-3xl font-bold text-gray-900 mb-1">{{ auth.user.fullName }}</h1>
                             <p class="text-gray-500 mb-4">{{ auth.user.email }}</p>
                             
-                            {{-- Statistik (Jumlah REAL) --}}
+                            {{-- Statistik (Jumlah REAL dari Database) --}}
                             <div class="flex gap-6 justify-center md:justify-start mb-6">
                                 <div class="text-center">
                                     <span class="block font-bold text-xl text-gray-800">{{ posts.length }}</span>
@@ -73,6 +74,7 @@
                 <div id="products-content">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-xl font-bold text-gray-800">My Shop Catalog</h2>
+                        {{-- Tombol Add Product Langsung Muncul --}}
                         <a href="{{ route('seller.products.create') }}" class="bg-green-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-green-700 transition flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -102,6 +104,7 @@
                                             <a href="{{ route('seller.products.edit', { id: product.id }) }}" class="flex-1 text-center bg-gray-50 border border-gray-200 text-gray-600 py-1.5 rounded text-sm font-medium hover:bg-gray-100 hover:text-green-600 transition">
                                                 Edit
                                             </a>
+                                            {{-- Form Delete Produk --}}
                                             <form action="{{ route('seller.products.destroy', { id: product.id }) }}" method="POST" class="flex-1" onsubmit="return confirm('Delete this product?')">
                                                 {{ csrfField() }}
                                                 <button type="submit" class="w-full text-center bg-red-50 border border-red-100 text-red-600 py-1.5 rounded text-sm font-medium hover:bg-red-100 transition">
@@ -149,11 +152,12 @@
                                             <div class="flex gap-4 text-xs text-gray-500 border-t border-gray-50 pt-2">
                                                 <span class="flex items-center gap-1">❤️ {{ post.likes ? post.likes.length : 0 }}</span>
                                                 <span class="flex items-center gap-1">💬 {{ post.comments ? post.comments.length : 0 }}</span>
+                                                
                                                 <div class="ml-auto">
-                                                    <form action="{{ route('posts.destroy', { id: post.id }) }}" method="POST" class="inline">
+                                                    {{-- Form Delete Post (PENTING: Pakai _method=DELETE) --}}
+                                                    <form action="{{ route('posts.destroy', { id: post.id }) }}?_method=DELETE" method="POST" class="inline" onsubmit="return confirm('Delete this post?')">
                                                         {{ csrfField() }}
-                                                        <input type="hidden" name="_method" value="DELETE">
-                                                        <button type="submit" class="text-red-500 hover:text-red-700" onclick="return confirm('Delete this post?')">Delete</button>
+                                                        <button type="submit" class="text-red-500 hover:text-red-700 font-semibold cursor-pointer">Delete</button>
                                                     </form>
                                                 </div>
                                             </div>
@@ -187,22 +191,28 @@
         const postTab = document.getElementById('tab-posts');
 
         // Reset Styles
-        prodTab.classList.remove('text-green-600', 'border-b-green-600');
-        postTab.classList.remove('text-green-600', 'border-b-green-600');
+        prodTab.classList.remove('text-green-600', 'border-b-green-600', 'text-gray-800');
+        prodTab.classList.add('text-gray-500');
+        
+        postTab.classList.remove('text-green-600', 'border-b-green-600', 'text-gray-800');
+        postTab.classList.add('text-gray-500');
+        
         prodContent.classList.add('hidden');
         postContent.classList.add('hidden');
 
         // Activate Selected
         if (tabName === 'products') {
             prodContent.classList.remove('hidden');
+            prodTab.classList.remove('text-gray-500');
             prodTab.classList.add('text-green-600', 'border-b-green-600');
         } else {
             postContent.classList.remove('hidden');
+            postTab.classList.remove('text-gray-500');
             postTab.classList.add('text-green-600', 'border-b-green-600');
         }
     }
 
-    // Default Tab: Products
+    // Default Tab
     window.addEventListener('DOMContentLoaded', () => {
         showTab('products');
     });
