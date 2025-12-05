@@ -1,396 +1,225 @@
-@layouts.main() 
-    @set('title', 'Plantopia - Social Community')
+@layouts.market({ hideCart: true })
+    @set('title', 'Plantopia Community')
 
     @slot('main')
-        <div class="bg-white min-h-screen">
-            {{-- Header Section --}}
-            <div class="max-w-2xl mx-auto px-4 py-6 border-b border-gray-200">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">Plant Community</h1>
-                <p class="text-gray-600">Share your plants, connect with others, and grow together</p>
+        <div class="bg-gray-50 min-h-screen py-8">
+            {{-- Header Simple --}}
+            <div class="max-w-2xl mx-auto px-4 mb-6 text-center">
+                <h1 class="text-3xl font-bold text-gray-800 mb-1">Community Feed</h1>
+                <p class="text-gray-500 text-sm">Connect with other plant lovers 🌱</p>
             </div>
 
-            <div class="max-w-2xl mx-auto px-4 py-6">
+            <div class="max-w-2xl mx-auto px-4">
                 
-                {{-- Create Post Section (FORM DYNAMIC) --}}
-                <div class="bg-white rounded-lg shadow-md p-6 mb-6 border border-gray-200">
-                    {{-- Form untuk membuat Post baru. Wajib enctype="multipart/form-data" --}}
-                    <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
-                        {{ csrfField() }} 
-
-                        {{-- Menampilkan Flash Messages atau Errors dari Redirect --}}
-                        @if(flashMessages.has('errors'))
-                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                                @each(error in flashMessages.get('errors'))
-                                    <p>{{ error.message }}</p>
-                                @endeach
-                            </div>
-                        @endif
-                        @if(flashMessages.has('notification'))
-                            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-                                <p>{{ flashMessages.get('notification') }}</p>
-                            </div>
-                        @endif
-
-                        <div class="flex gap-4 mb-4">
-                            {{-- User Avatar (Menggunakan data user yang sedang login) --}}
-                            <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
-                                @if(auth.user && auth.user.profilePicture)
-                                    <img src="{{ asset(auth.user.profilePicture) }}" alt="{{ auth.user.fullName }}" class="w-full h-full object-cover rounded-full">
-                                @else
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-600">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15a7.488 7.488 0 0 0-5.982 3.725m11.964 0a9 9 0 1 0-11.928 0" />
-                                    </svg>
-                                @endif
-                            </div>
-                            
-                            <div class="flex-1">
-                                <textarea 
-                                    name="content" {{-- Input Content --}}
-                                    placeholder="What are you thinking? Write here..." 
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-green-600"
-                                    rows="3"
-                                >{{ flashMessages.get('content') || '' }}</textarea>
-                                
-                                <div class="flex justify-between items-center mt-4">
-                                    <div class="flex gap-3">
-                                        {{-- File Upload Button --}}
-                                        <label for="image-upload" class="border border-gray-300 px-2 py-2 rounded-lg text-gray-600 hover:text-green-600 transition cursor-pointer" title="Upload Image">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.58 2.58m-8.948-9.354L15.3 12m0 0 4.2 4.2M12 21h6.75a2.25 2.25 0 0 0 2.25-2.25V5.25a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 5.25v13.5A2.25 2.25 0 0 0 5.25 21h6.75" />
-                                            </svg>
-                                            {{-- Input file tersembunyi --}}
-                                            <input type="file" name="image" id="image-upload" class="hidden" accept="image/jpeg,image/png,image/webp">
-                                        </label>
-                                        <span id="file-name" class="text-gray-500 text-sm py-2 self-center"></span>
-                                    </div>
-                                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition flex items-center gap-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-                                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
-                                        </svg>
-                                        Post
-                                    </button>
-                                </div>
-                            </div>
+                {{-- Create Post Box --}}
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+                    <div class="flex gap-3">
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                            @if(auth.user && auth.user.profilePicture)
+                                 <img src="/{{ auth.user.profilePicture }}" class="w-full h-full object-cover">
+                            @else
+                                 <span class="font-bold text-green-700">{{ auth.user?.firstName?.charAt(0) || 'U' }}</span>
+                            @endif
                         </div>
-                    </form>
+                        <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data" class="flex-1">
+                            {{ csrfField() }}
+                            <textarea name="content" rows="2" placeholder="What's growing in your garden?" class="w-full bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-green-500 p-3 mb-3 resize-none text-sm"></textarea>
+                            
+                            <div class="flex justify-between items-center">
+                                <label class="cursor-pointer text-gray-500 hover:text-green-600 transition flex items-center gap-2 text-xs font-medium">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                                    </svg>
+                                    <span>Add Photo</span>
+                                    <input type="file" name="image" class="hidden" accept="image/*" onchange="document.getElementById('fileName').textContent = this.files[0]?.name || ''">
+                                </label>
+                                <span id="fileName" class="text-xs text-gray-400 truncate max-w-[100px]"></span>
+                                
+                                <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-green-700 transition">Post</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
-                {{-- Posts Feed (LOOPING DATA DARI CONTROLLER) --}}
+                {{-- Posts List --}}
                 <div class="space-y-6">
-                    @if(posts && posts.length)
-                        {{-- LOOPING DATA POSTS --}}
+                    @if(posts && posts.length > 0)
                         @each(post in posts)
-                            <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden" data-post-id="{{ post.id }}">
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                                 {{-- Post Header --}}
-                                <div class="p-4 flex justify-between items-start">
-                                    <div class="flex gap-3 flex-1">
-                                        {{-- User Avatar --}}
-                                        <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
-                                            @if(post.user.profilePicture)
-                                                <img src="{{ asset(post.user.profilePicture) }}" alt="{{ post.user.fullName }}" class="w-full h-full object-cover">
-                                            @else
-                                                <span class="text-lg">👤</span>
-                                            @endif
-                                        </div>
-                                        <div class="flex-1">
-                                            {{-- Nama User --}}
-                                            <h3 class="font-semibold text-gray-800">{{ post.user.fullName }}</h3> 
-                                            {{-- Waktu Post (Menggunakan Luxon.toRelative() - Pastikan Luxon sudah terinstall) --}}
-                                            <p 
-                                                class="text-xs text-gray-500">
-                                                Posted {{ post.relativeTime }} 
-                                            </p>
-                                        </div>
+                                <div class="p-4 flex gap-3 items-center">
+                                    <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
+                                        @if(post.user.profilePicture)
+                                            <img src="/{{ post.user.profilePicture }}" class="w-full h-full object-cover">
+                                        @else
+                                            <span class="font-bold text-gray-500">{{ post.user.firstName.charAt(0) }}</span>
+                                        @endif
                                     </div>
-                                    {{-- Post Menu (Dropdown Edit/Delete) --}}
+                                    <div class="flex-1">
+                                        <h4 class="font-bold text-gray-800 text-sm">{{ post.user.fullName }}</h4>
+                                        <p class="text-xs text-gray-500">{{ post.relativeTime }}</p>
+                                    </div>
+                                    
                                     @if(auth.user && auth.user.id === post.userId)
-                                        <button class="text-gray-500 hover:text-gray-700">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
-                                                <path d="M12 3a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM12 9a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM12 15a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
-                                            </svg>
-                                        </button>
+                                        <form action="{{ route('posts.destroy', { id: post.id }) }}?_method=DELETE" method="POST" onsubmit="return confirm('Delete post?')">
+                                            {{ csrfField() }}
+                                            <button type="submit" class="text-gray-400 hover:text-red-500" title="Delete Post">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                                                    <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.49 1.478l-.56-.092.423 9.77a5.25 5.25 0 0 1-5.248 5.25H9.497a5.25 5.25 0 0 1-5.248-5.25l.423-9.77-.56.092a.75.75 0 1 1-.49-1.478 48.567 48.567 0 0 1 3.878-.512v-.227c0-1.185 1.01-2.146 2.192-2.146h3.722c1.182 0 2.192.96 2.192 2.146Z" clip-rule="evenodd" />
+                                                </svg>
+                                            </button>
+                                        </form>
                                     @endif
                                 </div>
-
+                                
                                 {{-- Post Content --}}
-                                <div class="px-4 pb-4">
-                                    <p class="text-gray-800 mb-3">{{ post.content }}</p>
+                                <div class="px-4 pb-2">
+                                    <p class="text-gray-800 mb-3 whitespace-pre-line">{{ post.content }}</p>
                                 </div>
-
-                                {{-- Post Images --}}
+                                
+                                {{-- Post Image (Hanya muncul jika ada gambar) --}}
                                 @if(post.image)
-                                    <div class="bg-gray-100 flex items-center justify-center">
-                                        <img src="{{ asset(post.image) }}" alt="Post image by {{ post.user.fullName }}" class="w-full h-auto object-cover max-h-96">
+                                    <div class="bg-gray-100 border-t border-gray-100">
+                                        <img src="/{{ post.image }}" class="w-full h-auto object-cover max-h-[500px]">
                                     </div>
                                 @endif
+                                {{-- JIKA TIDAK ADA GAMBAR, TIDAK ADA APAPUN (KOSONG) --}}
 
-                                {{-- Post Actions (Like & Comment Placeholder) --}}
-                                <div class="p-4 border-t border-gray-200">
-                                    <div class="flex gap-6 mb-4 text-gray-600 text-sm">
-                                        
-                                        {{-- Like Button (IMPLEMENTASI DENGAN DATA) --}}
+                                {{-- Interactions --}}
+                                <div class="p-4 border-t border-gray-50">
+                                    <div class="flex items-center gap-6">
+                                        {{-- Like Button --}}
                                         <button 
-                                            class="like-button flex items-center gap-2 transition group {{ post.isLikedByCurrentUser ? 'text-red-600 hover:text-red-700' : 'hover:text-red-600' }}"
-                                            data-post-id="{{ post.id }}"
-                                            data-is-liked="{{ post.isLikedByCurrentUser ? 'true' : 'false' }}"
-                                            title="{{ post.isLikedByCurrentUser ? 'Unlike' : 'Like' }}"
+                                            onclick="toggleLike({{ post.id }})" 
+                                            id="like-btn-{{ post.id }}"
+                                            class="flex items-center gap-2 transition group {{ post.isLikedByCurrentUser ? 'text-red-500' : 'text-gray-500 hover:text-red-500' }}"
                                         >
-                                            <svg xmlns="http://www.w3.org/2000/svg" 
-                                                fill="{{ post.isLikedByCurrentUser ? 'currentColor' : 'none' }}" 
-                                                viewBox="0 0 24 24" 
-                                                stroke-width="1.5" 
-                                                stroke="currentColor" 
-                                                class="size-6 transition-colors"
-                                            >
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="{{ post.isLikedByCurrentUser ? 'currentColor' : 'none' }}" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                                             </svg>
-                                            <span class="like-count" id="like-count-{{ post.id }}">{{ post.totalLikes }}</span>
+                                            <span class="text-sm font-semibold" id="like-count-{{ post.id }}">
+                                                {{ post.totalLikes }}
+                                            </span>
                                         </button>
 
-                                        {{-- Comment Button (Menampilkan Jumlah Komentar) --}}
-                                        <button 
-                                            class="flex items-center gap-2 hover:text-green-600 transition comment-button" 
-                                            data-post-id="{{ post.id }}" 
-                                            title="Lihat Komentar"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z" />
+                                        {{-- Comment Button --}}
+                                        <button onclick="toggleComments({{ post.id }})" class="flex items-center gap-2 text-gray-500 hover:text-green-600 transition">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.69 9-8.25s-4.03-8.25-9-8.25S3 7.44 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z" />
                                             </svg>
-                                            {{-- Menggunakan totalComments dari home_controller --}}
-                                            <span id="comment-count-{{ post.id }}">{{ post.totalComments }}</span>
+                                            <span class="text-sm font-semibold" id="comment-count-display-{{ post.id }}">
+                                                {{ post.totalComments }}
+                                            </span>
                                         </button>
                                     </div>
 
-                                </div>
-                                {{-- Form Komentar dan List (Setelah Post Actions, sebelum penutup post) --}}
-                                <div class="px-4 pb-4 border-t border-gray-100 mt-2">
-                                    {{-- Form Input Komentar --}}
-                                    <form class="comment-form flex gap-2" data-post-id="{{ post.id }}">
-                                        {{ csrfField() }}
-                                        <input type="hidden" name="postId" value="{{ post.id }}">
-                                        
-                                        {{-- Input Text Komentar --}}
-                                        <input 
-                                            type="text" 
-                                            name="content" 
-                                            placeholder="Tulis komentar Anda..."
-                                            required
-                                            class="flex-1 px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm"
-                                        >
-                                        
-                                        {{-- Tombol Submit --}}
-                                        <button type="submit" class="bg-green-600 text-white p-2 px-4 rounded-full font-semibold hover:bg-green-700 transition">
-                                            Kirim
-                                        </button>
-                                    </form>
-                                    
-                                    {{-- Container List Komentar (Akan diisi oleh AJAX) --}}
-                                    <div class="comment-list mt-4 text-sm" id="comment-list-{{ post.id }}">
-                                        @if(post.comments.length > 0)
-                                            @each(comment in post.comments.reverse()) 
-                                            <div class="mb-2 p-2 bg-gray-50 rounded">
-                                                {{-- 🟢 FIX: Membaca fullName dari data statis --}}
-                                                <span class="font-semibold">{{ comment.user.fullName }}:</span> 
-                                                <span>{{ comment.content }}</span>
-                                            </div>
-                                            @endeach
-                                        @else
-                                            <p class="text-gray-500">Belum ada komentar.</p>
-                                        @endif
+                                    {{-- Comments Section (Hidden) --}}
+                                    <div id="comments-section-{{ post.id }}" class="hidden mt-4 pt-4 border-t border-gray-100">
+                                        <div id="comments-list-{{ post.id }}" class="space-y-3 mb-4 max-h-60 overflow-y-auto custom-scrollbar">
+                                            @if(post.comments && post.comments.length > 0)
+                                                @each(comment in post.comments)
+                                                    <div class="bg-gray-50 p-3 rounded-lg text-sm">
+                                                        <span class="font-bold text-gray-800 mr-1">{{ comment.user.fullName }}:</span>
+                                                        <span class="text-gray-700">{{ comment.content }}</span>
+                                                    </div>
+                                                @end
+                                            @else
+                                                <p class="text-gray-400 text-xs text-center italic" id="no-comments-{{ post.id }}">No comments yet.</p>
+                                            @endif
+                                        </div>
+
+                                        <form onsubmit="submitComment(event, {{ post.id }})" class="flex gap-2">
+                                            <input type="text" id="comment-input-{{ post.id }}" placeholder="Write a comment..." class="flex-1 bg-gray-50 border-0 rounded-full px-4 py-2 text-sm focus:ring-1 focus:ring-green-500" required>
+                                            <button type="submit" class="text-green-600 font-semibold text-sm px-2 hover:text-green-700">Post</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
-                        @endeach
+                        @end
                     @else
-                        {{-- Empty State --}}
                         <div class="text-center py-12 text-gray-500">
-                            <p class="text-lg mb-2">Belum ada Post yang tersedia.</p>
-                            <p>Jadilah yang pertama untuk membagikan pengalaman bertanam Anda! 🌿</p>
+                            <p>No posts yet. Be the first to share!</p>
                         </div>
                     @endif
                 </div>
-
-                {{-- Load More --}}
-                <div class="text-center py-6">
-                    <button class="border-2 border-green-600 text-green-600 px-8 py-3 rounded-lg font-semibold hover:bg-green-50 transition">
-                        Load More Posts
-                    </button>
-                </div>
-
             </div>
         </div>
-        
-        {{-- SCRIPT: Menampilkan nama file yang di-upload --}}
-        <script>
-            const fileInput = document.getElementById('image-upload')
-            const fileNameDisplay = document.getElementById('file-name')
-
-            fileInput.addEventListener('change', (event) => {
-                if (event.target.files.length > 0) {
-                    fileNameDisplay.textContent = event.target.files[0].name
-                } else {
-                    fileNameDisplay.textContent = ''
-                }
-            })
-            // --- SCRIPT UNTUK FITUR LIKE (DIPERBAIKI) ---
-            // --- SCRIPT UNTUK FITUR LIKE (DIPERBAIKI) ---
-            document.addEventListener('DOMContentLoaded', () => { 
-                
-                function getCsrfToken() {
-                    const metaTag = document.querySelector('meta[name="csrf-token"]')
-                    return metaTag ? metaTag.content : ''
-                }
-
-                document.querySelectorAll('.like-button').forEach(button => {
-                    button.addEventListener('click', async (e) => {
-                        e.preventDefault();
-                        
-                        const postId = button.dataset.postId
-                        // Pastikan Anda sudah membuat Route POST /posts/:postId/like
-                        const url = `/posts/${postId}/like`; 
-                        const csrfToken = getCsrfToken(); 
-
-                        if (!csrfToken) {
-                            console.error("CSRF Token tidak ditemukan.");
-                            alert('Aksi tidak dapat dilakukan. Token keamanan hilang.');
-                            return;
-                        }
-
-                        try {
-                            const response = await fetch(url, {
-                                method: 'POST', 
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': csrfToken 
-                                }
-                            })
-                            
-                            if (!response.ok) {
-                                let errorMessage = 'Terjadi kesalahan saat menghubungi server.';
-                                
-                                try {
-                                    const error = await response.json();
-                                    if (error && error.message) {
-                                        errorMessage = error.message; 
-                                    }
-                                } catch (e) {
-                                    errorMessage += ` Status: ${response.status} ${response.statusText}`;
-                                }
-                                
-                                alert(errorMessage);
-                                return;
-                            }
-
-                            const data = await response.json() // { isLiked: boolean, totalLikes: number }
-
-                            // 1. Update Jumlah Like
-                            const countElement = document.getElementById(`like-count-${postId}`)
-                            countElement.textContent = data.totalLikes
-                            
-                            // 2. Update Tombol (Warna dan Data Attribute)
-                            button.dataset.isLiked = data.isLiked ? 'true' : 'false'
-                            const heartSvg = button.querySelector('svg');
-
-                            if (data.isLiked) {
-                                // Jika berhasil Like
-                                button.classList.add('text-red-600', 'hover:text-red-700')
-                                button.classList.remove('hover:text-red-600')
-                                heartSvg.setAttribute('fill', 'currentColor')
-                                button.setAttribute('title', 'Unlike')
-
-                            } else {
-                                // Jika berhasil Unlike
-                                button.classList.add('hover:text-red-600')
-                                button.classList.remove('text-red-600', 'hover:text-red-700')
-                                heartSvg.setAttribute('fill', 'none')
-                                button.setAttribute('title', 'Like')
-                            }
-
-                        } catch (error) {
-                            console.error('Error saat men-toggle like (Network/Unhandled):', error)
-                            alert('Terjadi kesalahan koneksi atau kesalahan tak terduga.');
-                        }
-                    })
-                })
-
-            })
-            // --- AKHIR SCRIPT FITUR LIKE ---/ <--- Akhir document.addEventListener
-            // --- SCRIPT UNTUK FITUR COMMENT ---
-            document.addEventListener('DOMContentLoaded', () => { 
-            
-            // Fungsi helper untuk mendapatkan CSRF Token
-            function getCsrfToken() {
-                const metaTag = document.querySelector('meta[name="csrf-token"]')
-                return metaTag ? metaTag.content : ''
-            }
-            
-            // Loop melalui semua form komentar
-            document.querySelectorAll('.comment-form').forEach(form => {
-                form.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    
-                    const postId = form.dataset.postId
-                    const contentInput = form.querySelector('input[name="content"]')
-                    const content = contentInput.value
-                    const csrfToken = getCsrfToken()
-                    
-                    if (!content.trim()) return
-
-                    try {
-                        // Kirim request POST ke route comments.store
-                        const response = await fetch('{{ route('comments.store') }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': csrfToken 
-                            },
-                            body: JSON.stringify({ postId, content })
-                        })
-                        
-                        const data = await response.json()
-
-                        if (response.ok) {
-                            // 1. Reset input form
-                            contentInput.value = ''
-                            
-                            // 2. Update jumlah komentar di UI
-                            const countElement = document.getElementById(`comment-count-${postId}`)
-                            if (countElement) {
-                                countElement.textContent = parseInt(countElement.textContent) + 1
-                            }
-                            
-                            // 3. Buat dan tampilkan komentar baru
-                            const commentList = document.getElementById(`comment-list-${postId}`)
-                            
-                            const newCommentHtml = `
-                                <div class="mb-2 p-2 bg-gray-50 rounded">
-                                    <span class="font-semibold">${data.comment.user.fullName || 'Anonymous'}:</span>
-                                    <span>${data.comment.content}</span>
-                                </div>
-                            `
-                            // Tambahkan komentar terbaru di bagian atas list
-                            if (commentList) {
-                                // Hapus placeholder 'Belum ada komentar.' jika ada
-                                const placeholder = commentList.querySelector('.text-gray-500')
-                                if(placeholder) placeholder.remove();
-                                
-                                commentList.insertAdjacentHTML('afterbegin', newCommentHtml) 
-                            }
-
-                        } else {
-                            // Tampilkan error dari Controller
-                            alert('Gagal mengirim komentar: ' + (data.message || 'Unknown error'))
-                        }
-
-                    } catch (error) {
-                        console.error('Error saat mengirim komentar:', error)
-                        alert('Terjadi kesalahan koneksi atau kesalahan tak terduga.')
-                    }
-                })
-            })
-
-        })
-        // --- AKHIR SCRIPT FITUR COMMENT ---
-        </script>
     @end
 @end
+
+<script>
+    function getCsrfToken() {
+        return document.querySelector('input[name="_csrf"]').value;
+    }
+
+    async function toggleLike(postId) {
+        try {
+            const response = await fetch(`/posts/${postId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': getCsrfToken()
+                }
+            });
+            
+            if(response.ok) {
+                const data = await response.json();
+                const btn = document.getElementById(`like-btn-${postId}`);
+                const count = document.getElementById(`like-count-${postId}`);
+                const icon = btn.querySelector('svg');
+
+                count.textContent = data.totalLikes;
+
+                if(data.isLiked) {
+                    btn.classList.add('text-red-500');
+                    btn.classList.remove('text-gray-500');
+                    icon.setAttribute('fill', 'currentColor');
+                } else {
+                    btn.classList.remove('text-red-500');
+                    btn.classList.add('text-gray-500');
+                    icon.setAttribute('fill', 'none');
+                }
+            }
+        } catch (e) {
+            console.error('Like error:', e);
+        }
+    }
+
+    function toggleComments(postId) {
+        document.getElementById(`comments-section-${postId}`).classList.toggle('hidden');
+    }
+
+    async function submitComment(e, postId) {
+        e.preventDefault();
+        const input = document.getElementById(`comment-input-${postId}`);
+        const content = input.value;
+        if(!content) return;
+
+        try {
+            const response = await fetch('/comments', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': getCsrfToken() },
+                body: JSON.stringify({ postId, content })
+            });
+
+            if(response.ok) {
+                const data = await response.json();
+                const list = document.getElementById(`comments-list-${postId}`);
+                const noComments = document.getElementById(`no-comments-${postId}`);
+                if(noComments) noComments.remove();
+
+                const newComment = document.createElement('div');
+                newComment.className = 'bg-gray-50 p-3 rounded-lg text-sm animate-fade-in';
+                newComment.innerHTML = `<span class="font-bold text-gray-800 mr-1">You:</span><span class="text-gray-700">${content}</span>`;
+                
+                list.insertBefore(newComment, list.firstChild);
+                input.value = '';
+
+                const counter = document.getElementById(`comment-count-display-${postId}`);
+                counter.textContent = parseInt(counter.textContent) + 1;
+            }
+        } catch (e) {
+            alert('Failed to post comment');
+        }
+    }
+</script>

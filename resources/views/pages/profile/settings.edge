@@ -1,4 +1,4 @@
-@layouts.main()
+@layouts.market({ hideCart: true }) 
     @set('title', 'Settings - Plantopia')
 
     @slot('main')
@@ -16,27 +16,15 @@
                     <p class="text-gray-600 mt-2">Manage your account information and preferences</p>
                 </div>
 
-                {{-- Success/Error Messages --}}
+                {{-- Alert Messages --}}
                 @if(flashMessages.has('success'))
-                    <div class="bg-green-50 text-green-700 px-6 py-4 rounded-lg mb-6 font-medium">
+                    <div class="bg-green-50 text-green-700 px-6 py-4 rounded-lg mb-6 font-medium border border-green-200">
                         ✓ {{ flashMessages.get('success') }}
                     </div>
                 @endif
-
                 @if(flashMessages.has('error'))
-                    <div class="bg-red-50 text-red-600 px-6 py-4 rounded-lg mb-6 font-medium">
+                    <div class="bg-red-50 text-red-600 px-6 py-4 rounded-lg mb-6 font-medium border border-red-200">
                         ✗ {{ flashMessages.get('error') }}
-                    </div>
-                @endif
-
-                @if(flashMessages.has('errors'))
-                    <div class="bg-red-50 text-red-600 px-6 py-4 rounded-lg mb-6">
-                        <p class="font-semibold mb-2">Please fix the following errors:</p>
-                        <ul class="list-disc list-inside space-y-1 text-sm">
-                            @each(error in flashMessages.get('errors'))
-                                <li>{{ error.message }}</li>
-                            @endeach
-                        </ul>
                     </div>
                 @endif
 
@@ -47,7 +35,7 @@
                     <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                         {{ csrfField() }}
 
-                        {{-- Foto Profil Preview & Input --}}
+                        {{-- Avatar --}}
                         <div class="flex items-center gap-6 pb-6 border-b border-gray-100">
                             <div class="h-24 w-24 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 border-2 border-green-100">
                                 @if(auth.user.profilePicture)
@@ -59,88 +47,38 @@
                             <div class="flex-1">
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Profile Picture</label>
                                 <input type="file" name="avatar" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 transition cursor-pointer">
-                                <p class="text-xs text-gray-500 mt-2">Recommended: Square image, JPG/PNG, Max 2MB.</p>
                             </div>
                         </div>
 
-                        {{-- First Name & Last Name --}}
+                        {{-- Names --}}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    First Name
-                                </label>
-                                <input 
-                                    type="text" 
-                                    name="firstName" 
-                                    value="{{ auth.user.firstName }}"
-                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all"
-                                    required
-                                >
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">First Name</label>
+                                <input type="text" name="firstName" value="{{ auth.user.firstName }}" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all" required>
                             </div>
-
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Last Name
-                                </label>
-                                <input 
-                                    type="text" 
-                                    name="lastName" 
-                                    value="{{ auth.user.lastName }}"
-                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all"
-                                    required
-                                >
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
+                                <input type="text" name="lastName" value="{{ auth.user.lastName }}" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all" required>
                             </div>
                         </div>
 
-                        {{-- Email (Read-only) --}}
+                        {{-- Readonly Email --}}
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                Email Address
-                                <span class="text-xs text-gray-500 font-normal ml-2">(Cannot be changed)</span>
-                            </label>
-                            <input 
-                                type="email" 
-                                value="{{ auth.user.email }}"
-                                class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-100 cursor-not-allowed"
-                                disabled
-                            >
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address <span class="text-xs text-gray-400 font-normal ml-2">(Cannot be changed)</span></label>
+                            <input type="email" value="{{ auth.user.email }}" class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-100 cursor-not-allowed" disabled>
                         </div>
 
-                        {{-- Phone Number --}}
+                        {{-- Phone & Bio --}}
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                Phone Number
-                            </label>
-                            <input 
-                                type="tel" 
-                                name="phoneNumbers" 
-                                value="{{ auth.user.phoneNumbers || '' }}"
-                                placeholder="+62 812 3456 7890"
-                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all"
-                            >
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+                            <input type="tel" name="phoneNumbers" value="{{ auth.user.phoneNumbers || '' }}" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Bio</label>
+                            <textarea name="bio" rows="4" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all resize-none">{{ auth.user.bio || '' }}</textarea>
                         </div>
 
-                        {{-- Bio --}}
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                Bio
-                            </label>
-                            <textarea 
-                                name="bio" 
-                                rows="4"
-                                placeholder="Tell us about yourself..."
-                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all resize-none"
-                            >{{ auth.user.bio || '' }}</textarea>
-                            <p class="text-xs text-gray-500 mt-1">Max 500 characters</p>
-                        </div>
-
-                        {{-- Save Button --}}
-                        <button 
-                            type="submit"
-                            class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition-colors"
-                        >
-                            Save Changes
-                        </button>
+                        <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition-colors">Save Changes</button>
                     </form>
                 </div>
 
@@ -148,34 +86,28 @@
                 <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200 mb-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6">My Addresses</h2>
 
-                    {{-- Add Address Form --}}
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-                        <h3 class="text-lg font-semibold text-blue-900 mb-4">Add New Address</h3>
-                        
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-6">
+                        <h3 class="text-lg font-semibold text-green-900 mb-4">Add New Address</h3>
                         <form action="{{ route('profile.add_address') }}" method="POST" class="space-y-4">
                             {{ csrfField() }}
-
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Street</label>
-                                    <input type="text" name="street" class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" required>
+                                    <input type="text" name="street" class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all" required>
                                 </div>
-
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">City</label>
-                                    <input type="text" name="city" class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" required>
+                                    <input type="text" name="city" class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all" required>
                                 </div>
                             </div>
-
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Region</label>
-                                    <input type="text" name="region" class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" required>
+                                    <input type="text" name="region" class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all" required>
                                 </div>
-
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">Country</label>
-                                    <select name="countryId" class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" required>
+                                    <select name="countryId" class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all" required>
                                         <option value="">Select a country</option>
                                         @each(country in countries)
                                             <option value="{{ country.id }}">{{ country.name }}</option>
@@ -183,25 +115,16 @@
                                     </select>
                                 </div>
                             </div>
-
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Unit Number (Optional)</label>
-                                <input type="text" name="unitNumber" placeholder="e.g., Apt 5B, Unit 201" class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all">
+                                <input type="text" name="unitNumber" class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all">
                             </div>
-
-                            <button 
-                                type="submit"
-                                class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                            >
-                                Save Address
-                            </button>
+                            <button type="submit" class="w-full bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 transition-colors">Save Address</button>
                         </form>
                     </div>
 
-                    {{-- Address List --}}
                     <div class="space-y-3">
                         @if(userAddresses && userAddresses.length > 0)
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Your Addresses</h3>
                             @each(userAddress in userAddresses)
                                 <div class="border border-gray-200 rounded-lg p-4 {{ userAddress.isDefault ? 'border-green-500 bg-green-50' : '' }}">
                                     <div class="flex justify-between items-start">
@@ -211,155 +134,74 @@
                                             @endif
                                             <p class="text-gray-800 font-medium">{{ userAddress.address.street }}</p>
                                             <p class="text-gray-600">{{ userAddress.address.city }}, {{ userAddress.address.region }}</p>
-                                            <p class="text-gray-500 text-sm">{{ userAddress.address.country.name }}</p>
-                                            
                                             @if(userAddress.isDefault)
-                                                <span class="inline-block bg-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold mt-2">
-                                                    ✓ Default Address
-                                                </span>
+                                                <span class="inline-block bg-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold mt-2">✓ Default Address</span>
                                             @endif
                                         </div>
-
                                         <div class="flex flex-col gap-2 ml-4">
                                             @if(!userAddress.isDefault)
                                                 <form action="{{ route('profile.set_default_address', { id: userAddress.id }) }}" method="POST" class="inline">
                                                     {{ csrfField() }}
-                                                    <button 
-                                                        type="submit"
-                                                        class="text-sm text-green-600 hover:text-green-700 font-semibold"
-                                                    >
-                                                        Set as Default
-                                                    </button>
+                                                    <button type="submit" class="text-sm text-green-600 hover:text-green-700 font-semibold">Set as Default</button>
                                                 </form>
                                             @endif
-                                            
                                             <form action="{{ route('profile.delete_address', { id: userAddress.id }) }}" method="POST" onsubmit="return confirm('Delete this address?')" class="inline">
                                                 {{ csrfField() }}
-                                                <button 
-                                                    type="submit"
-                                                    class="text-sm text-red-600 hover:text-red-700 font-semibold"
-                                                >
-                                                    Delete
-                                                </button>
+                                                <button type="submit" class="text-sm text-red-600 hover:text-red-700 font-semibold">Delete</button>
                                             </form>
                                         </div>
                                     </div>
                                 </div>
-                            @endeach
+                            @end
                         @else
-                            <div class="text-center py-8 text-gray-500">
-                                <p>No addresses added yet. Fill the form above to add your first address.</p>
-                            </div>
+                            <div class="text-center py-8 text-gray-500">No addresses added yet.</div>
                         @endif
                     </div>
                 </div>
 
-                {{-- Change Password --}}
+                {{-- Change Password Section (KEMBALI ADA) --}}
                 <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200 mb-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6">Change Password</h2>
                     
                     <form action="{{ route('profile.password') }}" method="POST" class="space-y-6">
                         {{ csrfField() }}
-
-                        {{-- Current Password --}}
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                Current Password
-                            </label>
-                            <input 
-                                type="password" 
-                                name="currentPassword"
-                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all"
-                                required
-                            >
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Current Password</label>
+                            <input type="password" name="currentPassword" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all" required>
                         </div>
-
-                        {{-- New Password --}}
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                New Password
-                            </label>
-                            <input 
-                                type="password" 
-                                name="newPassword"
-                                minlength="8"
-                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all"
-                                required
-                            >
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">New Password</label>
+                            <input type="password" name="newPassword" minlength="8" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all" required>
                             <p class="text-xs text-gray-500 mt-1">Minimum 8 characters</p>
                         </div>
-
-                        {{-- Confirm New Password --}}
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                Confirm New Password
-                            </label>
-                            <input 
-                                type="password" 
-                                name="newPasswordConfirmation"
-                                minlength="8"
-                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all"
-                                required
-                            >
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Confirm New Password</label>
+                            <input type="password" name="newPasswordConfirmation" minlength="8" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all" required>
                         </div>
-
-                        {{-- Change Password Button --}}
-                        <button 
-                            type="submit"
-                            class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors"
-                        >
-                            Change Password
-                        </button>
+                        <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition-colors">Change Password</button>
                     </form>
                 </div>
 
                 {{-- Danger Zone --}}
                 <div class="bg-white rounded-lg shadow-sm p-6 border border-red-200 mb-6">
                     <h2 class="text-2xl font-bold text-red-600 mb-2">Danger Zone</h2>
-                    <p class="text-gray-600 mb-6">Irreversible actions. Please be careful.</p>
-                    
-                    <div class="space-y-4 mb-6">
-                        {{-- Logout Button --}}
+                    <p class="text-gray-600 mb-6">Irreversible actions.</p>
+                    <div class="space-y-4">
                         <form action="{{ route('auth.logout') }}" method="POST">
                             {{ csrfField() }}
-                            <button 
-                                type="submit"
-                                class="w-full border-2 border-gray-300 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-700 hover:text-white transition-colors"
-                            >
-                                Logout
-                            </button>
+                            <button type="submit" class="w-full border-2 border-gray-300 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-700 hover:text-white transition-colors">Logout</button>
                         </form>
-                    </div>
-
-                    {{-- Delete Account Section --}}
-                    <div class="bg-red-50 border border-red-200 rounded-lg p-6">
-                        <h3 class="text-lg font-semibold text-red-700 mb-4">Delete Account</h3>
-                        <p class="text-gray-700 mb-4">
-                            This action cannot be undone. All your data will be permanently deleted.
-                        </p>
-
-                        <form action="{{ route('profile.delete') }}" method="POST" class="space-y-4">
-                            {{ csrfField() }}
-                            
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Enter your password to confirm deletion
-                                </label>
-                                <input 
-                                    type="password" 
-                                    name="password"
-                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all"
-                                    required
-                                >
-                            </div>
-
-                            <button 
-                                type="submit"
-                                class="w-full bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-700 transition-colors"
-                            >
-                                Delete My Account Permanently
-                            </button>
-                        </form>
+                        
+                        <div class="pt-4 border-t border-gray-100">
+                            <form action="{{ route('profile.delete') }}" method="POST">
+                                {{ csrfField() }}
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Confirm Password to Delete Account</label>
+                                <div class="flex gap-2">
+                                    <input type="password" name="password" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg" required placeholder="Enter password">
+                                    <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-red-700 transition-colors" onclick="return confirm('Are you sure?')">Delete Account</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

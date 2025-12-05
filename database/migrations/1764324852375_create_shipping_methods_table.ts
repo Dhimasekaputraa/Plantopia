@@ -6,8 +6,12 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').notNullable()
+      
+      // [PASTIKAN KOLOM INI ADA]
       table.string('name').notNullable()
-      table.integer('price').unsigned().notNullable().defaultTo(0)
+      table.integer('price').notNullable()
+      table.string('estimated_days').notNullable() // Snake_case untuk database
+
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()
     })

@@ -1,223 +1,128 @@
 @layouts.market()
-    @set('title', 'Plantopia - Shopping Cart')
+    @set('title', 'Shopping Cart - Plantopia')
 
     @slot('main')
-        <div class="bg-gray-50 py-12 px-4">
+        <div class="bg-gray-50 py-12 px-4 min-h-screen">
             <div class="max-w-7xl mx-auto">
                 {{-- Header --}}
-                <div class="mb-8">
-                    <h1 class="text-4xl font-bold text-gray-800 mb-2">Shopping Cart</h1>
-                    <p class="text-gray-600">Review and manage your items</p>
-                </div>
-
-                <div id="emptyCart" class="hidden">
-                    <div class="bg-white rounded-lg shadow-md p-12 text-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-20 h-20 text-gray-400 mx-auto mb-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.622 0 1.157.456 1.264 1.07l1.07 6.005h15.458a1.5 1.5 0 011.596 1.659l-.5 6a1.5 1.5 0 01-1.595 1.266H5.25" />
-                        </svg>
-                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Your cart is empty</h2>
-                        <p class="text-gray-600 mb-6">Start adding some plants to your cart!</p>
-                        <a href="/marketplace" class="inline-block bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition">
-                            Continue Shopping
-                        </a>
-                    </div>
-                </div>
-
-                <div id="cartContent" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {{-- Cart Items --}}
-                    <div class="lg:col-span-2">
-                        <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                            {{-- Cart Items List --}}
-                            <div id="cartItemsList" class="divide-y">
-                                <!-- Items will be populated by JavaScript -->
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Cart Summary --}}
+                <div class="mb-8 flex items-center justify-between">
                     <div>
-                        <div class="bg-white rounded-lg shadow-md p-6 sticky top-4">
-                            <h2 class="text-2xl font-bold text-gray-800 mb-6">Cart Summary</h2>
+                        <h1 class="text-3xl font-bold text-gray-800">Shopping Cart</h1>
+                        <p class="text-gray-600 mt-1">Manage your plants before checkout</p>
+                    </div>
+                    <a href="/marketplace" class="text-green-600 hover:text-green-700 font-semibold flex items-center gap-2">
+                        ← Continue Shopping
+                    </a>
+                </div>
 
-                            {{-- Summary Details --}}
-                            <div class="space-y-4 mb-6">
-                                <div class="flex justify-between text-gray-700">
-                                    <span>Subtotal:</span>
-                                    <span id="subtotal" class="font-semibold">$0.00</span>
-                                </div>
-                                <div class="flex justify-between text-gray-700">
-                                    <span>Items:</span>
-                                    <span id="itemCount" class="font-semibold">0</span>
-                                </div>
-                                <div class="border-t pt-4 flex justify-between text-xl font-bold text-gray-800">
-                                    <span>Total:</span>
-                                    <span id="total">$0.00</span>
-                                </div>
-                            </div>
+                @if(cart && cart.items && cart.items.length > 0)
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        
+                        {{-- Cart Items List --}}
+                        <div class="lg:col-span-2 space-y-4">
+                            @each(item in cart.items)
+                                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex gap-4 items-center">
+                                    {{-- Product Image --}}
+                                    <div class="w-24 h-24 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden">
+                                        @if(item.productItem.product.image)
+                                            <img src="/{{ item.productItem.product.image }}" class="w-full h-full object-cover">
+                                        @else
+                                            <div class="w-full h-full flex items-center justify-center text-3xl">
+                                                {{-- PERBAIKAN: Emoji ditaruh di baris baru --}}
+                                                @if(item.productItem.product.name.includes('Snake'))
+                                                    🌿
+                                                @elseif(item.productItem.product.name.includes('Rose'))
+                                                    🌹
+                                                @elseif(item.productItem.product.name.includes('Sunflower'))
+                                                    🌻
+                                                @else
+                                                    🌱
+                                                @endif
+                                            </div>
+                                        @endif
+                                    </div>
 
-                            {{-- Buttons --}}
-                            <div class="space-y-3">
-                                <button onclick="proceedToCheckout()" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition flex items-center justify-center gap-2">
-                                    <span>Proceed to Checkout</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6h9m-9-5h-3.375a2.25 2.25 0 0 0-2.25 2.25v.006c0 .804.656 1.5 1.5 1.5h2.247a2.25 2.25 0 0 0 2.25-2.25v-.006c0-.804-.656-1.5-1.5-1.5H3.375z" />
-                                    </svg>
-                                </button>
-                                <a href="/marketplace" class="block w-full text-center border border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition">
-                                    Continue Shopping
+                                    {{-- Details --}}
+                                    <div class="flex-1">
+                                        <h3 class="font-bold text-gray-800 text-lg">{{ item.productItem.product.name }}</h3>
+                                        <p class="text-gray-500 text-sm mb-2">{{ item.productItem.product.category?.categoryName || 'Plant' }}</p>
+                                        <p class="font-bold text-green-600">$ {{ item.productItem.price }}</p>
+                                    </div>
+
+                                    {{-- Actions (Update Qty & Delete) --}}
+                                    <div class="flex flex-col items-end gap-3">
+                                        {{-- Form Update Quantity --}}
+                                        <form action="{{ route('cart.update', { id: item.id }) }}" method="POST" class="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                                            {{ csrfField() }}
+                                            {{-- Tombol Minus --}}
+                                            <button type="submit" name="quantity" value="{{ item.quantity - 1 }}" class="px-3 py-1 hover:bg-gray-100 text-gray-600 font-bold transition">−</button>
+                                            
+                                            {{-- Display Angka --}}
+                                            <input type="text" value="{{ item.quantity }}" class="w-10 text-center text-sm font-semibold border-none focus:ring-0 p-0" readonly>
+                                            
+                                            {{-- Tombol Plus --}}
+                                            <button type="submit" name="quantity" value="{{ item.quantity + 1 }}" class="px-3 py-1 hover:bg-gray-100 text-green-600 font-bold transition">+</button>
+                                        </form>
+
+                                        {{-- Form Remove --}}
+                                        <form action="{{ route('cart.remove', { id: item.id }) }}" method="POST">
+                                            {{ csrfField() }}
+                                            <button type="submit" class="text-red-500 hover:text-red-700 text-sm underline transition">
+                                                Remove
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @end
+                        </div>
+
+                        {{-- Order Summary --}}
+                        <div class="lg:col-span-1">
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-24">
+                                <h3 class="text-xl font-bold text-gray-800 mb-6">Order Summary</h3>
+                                
+                                <div class="space-y-3 mb-6">
+                                    <div class="flex justify-between text-gray-600">
+                                        <span>Subtotal</span>
+                                        <span class="font-semibold text-gray-800">
+                                            $ {{ cart.items.reduce((acc, item) => acc + (item.quantity * item.productItem.price), 0).toFixed(2) }}
+                                        </span>
+                                    </div>
+                                    <div class="flex justify-between text-gray-600">
+                                        <span>Shipping</span>
+                                        <span class="text-green-600 font-medium">Free</span>
+                                    </div>
+                                </div>
+
+                                <div class="border-t border-gray-200 pt-4 mb-6">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-lg font-bold text-gray-800">Total</span>
+                                        <span class="text-2xl font-bold text-green-600">
+                                            $ {{ cart.items.reduce((acc, item) => acc + (item.quantity * item.productItem.price), 0).toFixed(2) }}
+                                        </span>
+                                    </div>
+                                    <p class="text-xs text-gray-400 mt-1 text-right">Includes tax & fees</p>
+                                </div>
+
+                                <a href="/checkout" class="block w-full bg-green-600 text-white text-center py-3 rounded-lg font-bold hover:bg-green-700 transition shadow-lg shadow-green-200">
+                                    Proceed to Checkout
                                 </a>
                             </div>
-
-                            {{-- Info Box --}}
-                            <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-3">
-                                <p class="text-sm text-gray-700">
-                                    <span class="font-semibold text-blue-700">ℹ️ Free Shipping:</span> On orders over $50!
-                                </p>
-                            </div>
-
-                            {{-- Clear Cart --}}
-                            <button onclick="clearCart()" class="w-full mt-4 text-red-600 py-2 font-semibold hover:text-red-800 transition">
-                                Clear Cart
-                            </button>
                         </div>
+
                     </div>
-                </div>
+                @else
+                    {{-- Empty State --}}
+                    <div class="text-center py-20 bg-white rounded-xl shadow-sm border border-gray-100">
+                        <div class="mb-4 text-6xl">🛒</div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Your cart is empty</h2>
+                        <p class="text-gray-500 mb-8">Looks like you haven't added any plants yet.</p>
+                        <a href="/marketplace" class="inline-block bg-green-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-green-700 transition">
+                            Start Shopping
+                        </a>
+                    </div>
+                @endif
             </div>
         </div>
     @end
 @end
-
-<script>
-    let cartItems = [];
-
-    // Load cart from sessionStorage
-    function loadCart() {
-        const savedCart = sessionStorage.getItem('plantopia_cart');
-        if (savedCart) {
-            cartItems = JSON.parse(savedCart);
-        }
-        renderCart();
-    }
-
-    function renderCart() {
-        const emptyCart = document.getElementById('emptyCart');
-        const cartContent = document.getElementById('cartContent');
-        const cartItemsList = document.getElementById('cartItemsList');
-
-        if (cartItems.length === 0) {
-            emptyCart.classList.remove('hidden');
-            cartContent.classList.add('hidden');
-            return;
-        }
-
-        emptyCart.classList.add('hidden');
-        cartContent.classList.remove('hidden');
-
-        cartItemsList.innerHTML = cartItems.map((item, index) => `
-            <div class="p-6 hover:bg-gray-50 transition">
-                <div class="flex gap-6">
-                    {{-- Product Image/Icon --}}
-                    <div class="flex-shrink-0">
-                        <div class="w-24 h-24 bg-green-200 rounded-lg flex items-center justify-center">
-                            <span class="text-5xl">${item.emoji}</span>
-                        </div>
-                    </div>
-
-                    {{-- Product Details --}}
-                    <div class="flex-1">
-                        <div class="flex justify-between mb-2">
-                            <h3 class="text-lg font-semibold text-gray-800">${item.name}</h3>
-                            <button onclick="removeFromCart(${index})" class="text-red-600 hover:text-red-800 transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                </svg>
-                            </button>
-                        </div>
-                        
-                        <p class="text-green-600 font-bold text-lg mb-4">$${item.price.toFixed(2)}</p>
-
-                        {{-- Quantity Control --}}
-                        <div class="flex items-center gap-4">
-                            <div class="flex items-center border border-gray-300 rounded-lg">
-                                <button onclick="updateQuantity(${index}, ${item.quantity - 1})" class="px-4 py-2 text-gray-600 hover:bg-gray-100 transition font-semibold">
-                                    −
-                                </button>
-                                <input 
-                                    type="number" 
-                                    value="${item.quantity}" 
-                                    onchange="updateQuantityInput(${index}, this.value)"
-                                    class="w-16 text-center border-l border-r border-gray-300 py-2 focus:outline-none"
-                                    min="1"
-                                />
-                                <button onclick="updateQuantity(${index}, ${item.quantity + 1})" class="px-4 py-2 text-gray-600 hover:bg-gray-100 transition font-semibold">
-                                    +
-                                </button>
-                            </div>
-                            <span class="font-semibold text-gray-800 ml-4">
-                                $${(item.price * item.quantity).toFixed(2)}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-
-        updateSummary();
-    }
-
-    function updateQuantity(index, newQuantity) {
-        if (newQuantity < 1) {
-            removeFromCart(index);
-            return;
-        }
-        
-        cartItems[index].quantity = newQuantity;
-        saveCart();
-        renderCart();
-    }
-
-    function updateQuantityInput(index, value) {
-        const newQuantity = parseInt(value) || 1;
-        updateQuantity(index, newQuantity);
-    }
-
-    function removeFromCart(index) {
-        if (confirm('Remove this item from cart?')) {
-            cartItems.splice(index, 1);
-            saveCart();
-            renderCart();
-        }
-    }
-
-    function clearCart() {
-        if (confirm('Clear all items from cart?')) {
-            cartItems = [];
-            saveCart();
-            renderCart();
-        }
-    }
-
-    function updateSummary() {
-        const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-
-        document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
-        document.getElementById('itemCount').textContent = itemCount;
-        document.getElementById('total').textContent = `$${subtotal.toFixed(2)}`;
-    }
-
-    function saveCart() {
-        sessionStorage.setItem('plantopia_cart', JSON.stringify(cartItems));
-    }
-
-    function proceedToCheckout() {
-        if (cartItems.length === 0) {
-            alert('Your cart is empty!');
-            return;
-        }
-        window.location.href = '/checkout';
-    }
-
-    // Initialize
-    loadCart();
-</script>
