@@ -41,7 +41,7 @@ router.group(() => {
   
   // 2. Profile Management
   router.get('/profile', [ProfileController, 'show']).as('profile')
-  router.get('profile/u/:id',[ProfileController,'showOther']).as('profile.other')
+  router.get('profile/u/:id',[ProfileController,'show']).as('profile.other') //baru: liat profile orang
   router.get('/profile/settings', [ProfileController, 'settings']).as('profile.settings')
   router.post('/profile/update', [ProfileController, 'update']).as('profile.update')
   router.post('/profile/password', [ProfileController, 'changePassword']).as('profile.password')

@@ -92,7 +92,7 @@
                                 <p class="text-sm font-bold text-gray-900">{{ auth.user?.fullName }}</p>
                                 <p class="text-xs text-gray-500 truncate">{{ auth.user?.email }}</p>
                             </div>
-                            <a href="{{ route('profile.other', { id: auth.user.id }) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Profile</a>
+                            <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Profile</a>
                             <a href="/marketplace/my-products" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Seller Dashboard</a>
                             <div class="border-t border-gray-50 my-1"></div>
                             <form action="{{ route('auth.logout') }}" method="POST">
