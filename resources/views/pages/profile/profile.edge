@@ -1,6 +1,6 @@
 {{-- Gunakan Header Market tapi sembunyikan keranjang (Konsisten dengan Community) --}}
 @layouts.market({ hideCart: true })
-    @set('title', auth.user.fullName + ' - Profile')
+    @set('title', user.fullName + ' - Profile')
 
     @slot('main')
         <div class="bg-gray-50 min-h-screen">
@@ -11,9 +11,9 @@
                     <div class="flex flex-col md:flex-row gap-8 items-center">
                         
                         {{-- Avatar --}}
-                        <div class="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden border-4 border-white shadow-lg">
-                            @if(auth.user.profilePicture)
-                                <img src="/{{ auth.user.profilePicture }}" alt="Profile" class="w-full h-full object-cover">
+                        <div class="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center shrink-0 overflow-hidden border-4 border-white shadow-lg">
+                            @if(user.profilePicture)
+                                <img src="/{{ user.profilePicture }}" alt="Profile" class="w-full h-full object-cover">
                             @else
                                 <span class="text-4xl">👤</span>
                             @endif
@@ -21,8 +21,8 @@
 
                         {{-- Info User --}}
                         <div class="flex-1 text-center md:text-left">
-                            <h1 class="text-3xl font-bold text-gray-900 mb-1">{{ auth.user.fullName }}</h1>
-                            <p class="text-gray-500 mb-4">{{ auth.user.email }}</p>
+                            <h1 class="text-3xl font-bold text-gray-900 mb-1">{{ user.fullName }}</h1>
+                            <p class="text-gray-500 mb-4">{{ user.email }}</p>
                             
                             {{-- Statistik (Jumlah REAL dari Database) --}}
                             <div class="flex gap-6 justify-center md:justify-start mb-6">
@@ -37,12 +37,14 @@
                             </div>
 
                             {{-- Tombol Edit --}}
+                            @if(user.id == auth.user.id)
                             <a href="{{ route('profile.settings') }}" class="inline-flex items-center gap-2 px-6 py-2 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                                 </svg>
                                 Edit Profile
                             </a>
+                            @endif
                         </div>
                     </div>
                     
@@ -61,17 +63,19 @@
                 {{-- Tab Buttons --}}
                 <div class="flex border-b border-gray-200 mb-6">
                     <button onclick="showTab('products')" id="tab-products" class="px-6 py-3 font-semibold text-gray-500 hover:text-green-600 border-b-2 border-transparent transition focus:outline-none">
-                        My Products
+                        Products
                     </button>
                     <button onclick="showTab('posts')" id="tab-posts" class="px-6 py-3 font-semibold text-gray-500 hover:text-green-600 border-b-2 border-transparent transition focus:outline-none">
-                        My Posts
+                        Posts
                     </button>
                 </div>
 
                 {{-- 3. CONTENT AREA --}}
                 
                 {{-- A. PRODUCT CONTENT --}}
+                
                 <div id="products-content">
+                    @if(user.id == auth.user.id)
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-xl font-bold text-gray-800">My Shop Catalog</h2>
                         {{-- Tombol Add Product Langsung Muncul --}}
@@ -82,6 +86,7 @@
                             Add New Product
                         </a>
                     </div>
+                    @endif
 
                     @if(products && products.length > 0)
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
@@ -100,6 +105,7 @@
                                             <span class="text-green-600 font-bold">$ {{ product.items[0]?.price }}</span>
                                             <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">{{ product.soldCount }} Sold</span>
                                         </div>
+                                        @if(user.id == auth.user.id)
                                         <div class="mt-4 flex gap-2">
                                             <a href="{{ route('seller.products.edit', { id: product.id }) }}" class="flex-1 text-center bg-gray-50 border border-gray-200 text-gray-600 py-1.5 rounded text-sm font-medium hover:bg-gray-100 hover:text-green-600 transition">
                                                 Edit
@@ -112,6 +118,7 @@
                                                 </button>
                                             </form>
                                         </div>
+                                        @endif
                                     </div>
                                 </div>
                             @end
@@ -119,11 +126,15 @@
                     @else
                         <div class="text-center py-16 bg-white rounded-xl border border-dashed border-gray-300">
                             <div class="text-6xl mb-4">🏪</div>
+                            @if(user.id == auth.user.id)
                             <h3 class="text-lg font-bold text-gray-800 mb-2">Start Your Shop</h3>
                             <p class="text-gray-500 mb-6">You haven't listed any plants for sale yet.</p>
                             <a href="{{ route('seller.products.create') }}" class="inline-block px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition">
                                 Upload First Product
                             </a>
+                            @else
+                            <p class="text-gray-500 mb-6">This user hasnt listed any plants for sale yet.</p>
+                            @endif
                         </div>
                     @endif
                 </div>
@@ -141,7 +152,7 @@
                                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
                                     <div class="p-4 flex gap-4">
                                         @if(post.image)
-                                            <div class="w-24 h-24 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
+                                            <div class="w-24 h-24 shrink-0 bg-gray-100 rounded-lg overflow-hidden">
                                                 <img src="/{{ post.image }}" class="w-full h-full object-cover">
                                             </div>
                                         @endif
@@ -154,11 +165,13 @@
                                                 <span class="flex items-center gap-1">💬 {{ post.comments ? post.comments.length : 0 }}</span>
                                                 
                                                 <div class="ml-auto">
+                                                    @if(user.id == auth.user.id)
                                                     {{-- Form Delete Post (PENTING: Pakai _method=DELETE) --}}
                                                     <form action="{{ route('posts.destroy', { id: post.id }) }}?_method=DELETE" method="POST" class="inline" onsubmit="return confirm('Delete this post?')">
                                                         {{ csrfField() }}
                                                         <button type="submit" class="text-red-500 hover:text-red-700 font-semibold cursor-pointer">Delete</button>
                                                     </form>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
@@ -170,10 +183,12 @@
                         <div class="text-center py-16 bg-white rounded-xl border border-dashed border-gray-300">
                             <div class="text-6xl mb-4">🌱</div>
                             <h3 class="text-lg font-bold text-gray-800 mb-2">No Posts Yet</h3>
+                            @if(user.id == auth.user.id)
                             <p class="text-gray-500 mb-6">Share your plant journey with the community!</p>
                             <a href="/socmed" class="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition">
                                 Create Post
                             </a>
+                            @endif
                         </div>
                     @endif
                 </div>

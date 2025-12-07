@@ -45,6 +45,37 @@ export default class ProfileController {
     })
   }
 
+  //melihat user lain
+  async showOther({ view, params }: HttpContext) {
+    const user = await User.query().where('id',params.id).firstOrFail()
+
+    // 1. Ambil Postingan User (Urutkan dari terbaru)
+    const posts = await Post.query()
+        .where('userId', user.id)
+        .orderBy('createdAt', 'desc')
+        .preload('user')
+        .preload('likes')
+        .preload('comments')
+
+    // 2. Ambil Produk User (Urutkan dari terbaru)
+    const products = await Product.query()
+        .where('userId', user.id)
+        .orderBy('createdAt', 'desc')
+        .preload('items') // Untuk menampilkan harga
+
+    // 3. Ambil Alamat (Untuk ditampilkan di dashboard)
+    const userAddresses = await UserAddress.query()
+        .where('userId', user.id)
+        .preload('address', (q) => q.preload('country'))
+
+    return view.render('pages/profile/profile', { 
+        user, 
+        posts, 
+        products,
+        userAddresses 
+    })
+  }
+
   /**
    * Menampilkan Halaman Pengaturan (Settings)
    */

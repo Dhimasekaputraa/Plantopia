@@ -41,17 +41,22 @@ router.group(() => {
   
   // 2. Profile Management
   router.get('/profile', [ProfileController, 'show']).as('profile')
+  router.get('profile/u/:id',[ProfileController,'showOther']).as('profile.other')
   router.get('/profile/settings', [ProfileController, 'settings']).as('profile.settings')
   router.post('/profile/update', [ProfileController, 'update']).as('profile.update')
   router.post('/profile/password', [ProfileController, 'changePassword']).as('profile.password')
   router.post('/profile/delete', [ProfileController, 'delete']).as('profile.delete')
   router.post('/profile/toggle-seller', [ProfileController, 'toggleSellerMode']).as('profile.toggleSeller')
   
+  // Other user Routes
+  
+  
   // Address Routes
   router.post('/profile/add-address', [ProfileController, 'addAddress']).as('profile.add_address')
   router.post('/profile/delete-address/:id', [ProfileController, 'deleteAddress']).as('profile.delete_address')
   router.post('/profile/set-default-address/:id', [ProfileController, 'setDefaultAddress']).as('profile.set_default_address')
 
+  
   // 3. SELLER ROUTES
   router.get('/marketplace/my-products', [SellerProductController, 'index']).as('seller.products.index')
   router.get('/marketplace/seller/add', [SellerProductController, 'create']).as('seller.products.create')

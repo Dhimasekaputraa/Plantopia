@@ -125,7 +125,7 @@
                                 </div>
                                 <div class="text-sm">
                                     <p class="text-gray-500">Seller:</p>
-                                    <p class="font-semibold text-gray-700">{{ product.user.fullName }}</p>
+                                    <a href="{{ route('profile.other', { id: product.user.id }) }}" class="font-semibold text-gray-700 hover:underline">{{ product.user.fullName }}</a>
                                 </div>
                             </div>
                         </div>
@@ -157,7 +157,8 @@
                                                     <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-700 font-bold text-xs">
                                                         {{ review.user.firstName.charAt(0) }}
                                                     </div>
-                                                    <span class="font-semibold text-gray-800">{{ review.user.fullName }}</span>
+                                                    <a href="{{ route('profile.other', { id: review.user.id }) }}" class="font-semibold text-gray-800 hover:underline">{{ review.user.fullName }}</a>
+        
                                                 </div>
                                                 <span class="text-xs text-gray-500">
                                                     {{ review.createdAt.toFormat('dd MMM yyyy') }}
