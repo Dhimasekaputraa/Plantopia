@@ -48,9 +48,6 @@ router.group(() => {
   router.post('/profile/delete', [ProfileController, 'delete']).as('profile.delete')
   router.post('/profile/toggle-seller', [ProfileController, 'toggleSellerMode']).as('profile.toggleSeller')
   
-  // Other user Routes
-  
-  
   // Address Routes
   router.post('/profile/add-address', [ProfileController, 'addAddress']).as('profile.add_address')
   router.post('/profile/delete-address/:id', [ProfileController, 'deleteAddress']).as('profile.delete_address')
