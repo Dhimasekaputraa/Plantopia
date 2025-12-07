@@ -15,8 +15,14 @@ export default class ProfileController {
    * Menampilkan Halaman Profil Utama
    * Memuat data User, Posts, Products, dan Alamat
    */
-  async show({ view, auth }: HttpContext) {
-    const user = auth.user!
+  async show({ view, auth, params}: HttpContext) {
+    let user
+    if (params.id){
+      user = await User.query().where('id',params.id).firstOrFail()
+    }else{
+      user = auth.user!
+    }
+    
 
     // 1. Ambil Postingan User (Urutkan dari terbaru)
     const posts = await Post.query()
