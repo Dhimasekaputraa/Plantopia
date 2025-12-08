@@ -41,6 +41,7 @@ router.group(() => {
   
   // 2. Profile Management
   router.get('/profile', [ProfileController, 'show']).as('profile')
+  router.get('profile/u/:id',[ProfileController,'show']).as('profile.other') //baru: liat profile orang
   router.get('/profile/settings', [ProfileController, 'settings']).as('profile.settings')
   router.post('/profile/update', [ProfileController, 'update']).as('profile.update')
   router.post('/profile/password', [ProfileController, 'changePassword']).as('profile.password')
@@ -52,6 +53,7 @@ router.group(() => {
   router.post('/profile/delete-address/:id', [ProfileController, 'deleteAddress']).as('profile.delete_address')
   router.post('/profile/set-default-address/:id', [ProfileController, 'setDefaultAddress']).as('profile.set_default_address')
 
+  
   // 3. SELLER ROUTES
   router.get('/marketplace/my-products', [SellerProductController, 'index']).as('seller.products.index')
   router.get('/marketplace/seller/add', [SellerProductController, 'create']).as('seller.products.create')

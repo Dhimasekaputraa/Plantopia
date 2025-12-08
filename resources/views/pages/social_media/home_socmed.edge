@@ -56,7 +56,7 @@
                                         @endif
                                     </div>
                                     <div class="flex-1">
-                                        <h4 class="font-bold text-gray-800 text-sm">{{ post.user.fullName }}</h4>
+                                        <a href="{{ route('profile.other', { id: post.user.id }) }}" class="font-bold text-gray-800 hover:underline text-sm">{{ post.user.fullName }}</a>
                                         <p class="text-xs text-gray-500">{{ post.relativeTime }}</p>
                                     </div>
                                     
