@@ -49,9 +49,9 @@
                     </div>
                     
                     {{-- Bio --}}
-                    @if(auth.user.bio)
+                    @if(user.bio)
                         <div class="mt-6 text-gray-600 text-center md:text-left max-w-2xl">
-                            "{{ auth.user.bio }}"
+                            "{{ user.bio }}"
                         </div>
                     @endif
                 </div>
@@ -92,6 +92,7 @@
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
                             @each(product in products)
                                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition group">
+                                    <a href="{{ route('marketplace.product.show', { id: product.id }) }}" class="hover:shadow">
                                     <div class="h-48 bg-gray-100 relative overflow-hidden">
                                         @if(product.image)
                                             <img src="/{{ product.image }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
@@ -120,6 +121,7 @@
                                         </div>
                                         @endif
                                     </div>
+                                    </a>
                                 </div>
                             @end
                         </div>
