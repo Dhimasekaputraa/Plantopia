@@ -56,9 +56,26 @@
                 </a>
 
                 {{-- Desktop Menu --}}
-                <div class="hidden md:flex items-center gap-8">
-                    <a href="/marketplace" class="text-base font-medium {{ request.url().includes('marketplace') ? 'text-green-600' : 'text-gray-600 hover:text-green-600' }} transition">Market</a>
-                    <a href="/socmed" class="text-base font-medium {{ request.url().includes('socmed') ? 'text-green-600' : 'text-gray-600 hover:text-green-600' }} transition">Community</a>
+               <div class="hidden md:flex items-center gap-8">
+                    <a 
+                        href="/marketplace" 
+                        class="text-base font-medium transition relative pb-2 {{ request.url().includes('marketplace') ? 'text-green-600' : 'text-gray-600 hover:text-green-600' }}"
+                    >
+                        Market
+                        @if(request.url().includes('marketplace'))
+                            <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-green-600"></span>
+                        @endif
+                    </a>
+                    
+                    <a 
+                        href="/socmed" 
+                        class="text-base font-medium transition relative pb-2 {{ request.url().includes('socmed') ? 'text-green-600' : 'text-gray-600 hover:text-green-600' }}"
+                    >
+                        Community
+                        @if(request.url().includes('socmed'))
+                            <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-green-600"></span>
+                        @endif
+                    </a>
                 </div>
 
                 {{-- Right Actions --}}

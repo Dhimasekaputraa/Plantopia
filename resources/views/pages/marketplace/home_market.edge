@@ -15,6 +15,107 @@
         </div>
 
         <div class="max-w-7xl mx-auto px-4 py-8 pb-20">
+             {{-- PROMO BANNER CAROUSEL --}}
+            <div class="mb-8 relative rounded-2xl overflow-hidden shadow-lg">
+                {{-- Carousel Container --}}
+                <div id="bannerCarousel" class="relative h-64 md:h-80 lg:h-96 overflow-hidden">
+                    
+                    {{-- Banner Slides --}}
+                    <div id="carouselTrack" class="flex transition-transform duration-500 ease-out h-full">
+                        
+                        {{-- Banner 1 --}}
+                        <div class="carousel-slide min-w-full h-full relative">
+                            <img 
+                                src="/resources/assets/banners/promo-1.jpg" 
+                                alt="Promo 1" 
+                                class="w-full h-full object-cover"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"
+                            >
+                            {{-- Fallback jika gambar tidak ada --}}
+                            <div class="hidden w-full h-full bg-gradient-to-r from-green-500 to-green-600 items-center justify-center p-8 text-white">
+                                <div class="text-center">
+                                    <h2 class="text-4xl md:text-5xl font-bold mb-4">Spring Sale!</h2>
+                                    <p class="text-xl md:text-2xl mb-6">Up to 50% OFF on all plants</p>
+                                    <button class="bg-white text-green-600 px-8 py-3 rounded-lg font-bold hover:bg-green-50 transition">
+                                        Shop Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Banner 2 --}}
+                        <div class="carousel-slide min-w-full h-full relative">
+                            <img 
+                                src="/resources/assets/banners/promo-2.jpg" 
+                                alt="Promo 2" 
+                                class="w-full h-full object-cover"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"
+                            >
+                            {{-- Fallback --}}
+                            <div class="hidden w-full h-full bg-gradient-to-r from-green-500 to-green-600 items-center justify-center p-8 text-white">
+                                <div class="text-center">
+                                    <h2 class="text-4xl md:text-5xl font-bold mb-4">New Arrivals</h2>
+                                    <p class="text-xl md:text-2xl mb-6">Fresh plants just arrived!</p>
+                                    <button class="bg-white text-green-600 px-8 py-3 rounded-lg font-bold hover:bg-purple-50 transition">
+                                        Explore
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Banner 3 --}}
+                        <div class="carousel-slide min-w-full h-full relative">
+                            <img 
+                                src="/resources/assets/banners/promo-3.jpg" 
+                                alt="Promo 3" 
+                                class="w-full h-full object-cover"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"
+                            >
+                            {{-- Fallback --}}
+                            <div class="hidden w-full h-full bg-gradient-to-r from-green-500 to-green-600 items-center justify-center p-8 text-white">
+                                <div class="text-center">
+                                    <h2 class="text-4xl md:text-5xl font-bold mb-4">Free Shipping</h2>
+                                    <p class="text-xl md:text-2xl mb-6">On orders over $50</p>
+                                    <button class="bg-white text-green-600 px-8 py-3 rounded-lg font-bold hover:bg-orange-50 transition">
+                                        Learn More
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {{-- Previous Button --}}
+                    <button 
+                        id="prevBtn"
+                        class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-3 rounded-full shadow-lg transition z-10 backdrop-blur-sm"
+                        onclick="prevSlide()"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                        </svg>
+                    </button>
+
+                    {{-- Next Button --}}
+                    <button 
+                        id="nextBtn"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-3 rounded-full shadow-lg transition z-10 backdrop-blur-sm"
+                        onclick="nextSlide()"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </button>
+
+                    {{-- Dots Indicator --}}
+                    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                        <button class="dot w-3 h-3 rounded-full bg-white transition" onclick="goToSlide(0)"></button>
+                        <button class="dot w-3 h-3 rounded-full bg-white/50 transition" onclick="goToSlide(1)"></button>
+                        <button class="dot w-3 h-3 rounded-full bg-white/50 transition" onclick="goToSlide(2)"></button>
+                    </div>
+                </div>
+            </div>
+
            {{-- Filter Categories (AKTIF) --}}
             <div class="flex gap-3 overflow-x-auto pb-4 mb-6 no-scrollbar">
                 {{-- Helper function untuk mengecek kategori aktif --}}
@@ -147,3 +248,64 @@
         </div>
     @end
 @end
+
+<script>
+    let currentSlide = 0;
+    const totalSlides = 3; // Sesuaikan dengan jumlah banner
+    let autoSlideInterval;
+
+    function updateCarousel() {
+        const track = document.getElementById('carouselTrack');
+        const dots = document.querySelectorAll('.dot');
+        
+        // Update position
+        track.style.transform = `translateX(-${currentSlide * 100}%)`;
+        
+        // Update dots
+        dots.forEach((dot, index) => {
+            if (index === currentSlide) {
+                dot.classList.remove('bg-white/50');
+                dot.classList.add('bg-white');
+            } else {
+                dot.classList.remove('bg-white');
+                dot.classList.add('bg-white/50');
+            }
+        });
+    }
+
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        updateCarousel();
+        resetAutoSlide();
+    }
+
+    function prevSlide() {
+        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+        updateCarousel();
+        resetAutoSlide();
+    }
+
+    function goToSlide(index) {
+        currentSlide = index;
+        updateCarousel();
+        resetAutoSlide();
+    }
+
+    function startAutoSlide() {
+        autoSlideInterval = setInterval(nextSlide, 5000); // Auto slide every 5 seconds
+    }
+
+    function resetAutoSlide() {
+        clearInterval(autoSlideInterval);
+        startAutoSlide();
+    }
+
+    // Initialize
+    updateCarousel();
+    startAutoSlide();
+
+    // Pause auto-slide on hover
+    const carousel = document.getElementById('bannerCarousel');
+    carousel.addEventListener('mouseenter', () => clearInterval(autoSlideInterval));
+    carousel.addEventListener('mouseleave', startAutoSlide);
+</script>
