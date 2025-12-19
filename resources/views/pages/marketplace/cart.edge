@@ -27,15 +27,15 @@
                                         @if(item.productItem.product.image)
                                             <img src="/{{ item.productItem.product.image }}" class="w-full h-full object-cover">
                                         @else
-                                            <div class="w-full h-full flex items-center justify-center text-3xl">   
-                                                @if(item.productItem.product.name.includes('Snake'))
-                                                    🌿
-                                                @elseif(item.productItem.product.name.includes('Rose'))
-                                                    🌹
-                                                @elseif(item.productItem.product.name.includes('Sunflower'))
-                                                    🌻
-                                                @else
-                                                    🌱
+                                            <div class="w-full h-full flex items-center justify-center text-3xl">
+                                                @if(item.productItem.product.name.includes('Snake')) 
+                                                🌿
+                                                @elseif(item.productItem.product.name.includes('Rose')) 
+                                                🌹
+                                                @elseif(item.productItem.product.name.includes('Sunflower')) 
+                                                🌻
+                                                @else 
+                                                🌱
                                                 @endif
                                             </div>
                                         @endif
@@ -44,23 +44,46 @@
                                     {{-- Details --}}
                                     <div class="flex-1">
                                         <h3 class="font-bold text-gray-800 text-lg">{{ item.productItem.product.name }}</h3>
-                                        <p class="text-gray-500 text-sm mb-2">{{ item.productItem.product.category?.categoryName || 'Plant' }}</p>
-                                        <p class="font-bold text-green-600">$ {{ item.productItem.price }}</p>
+                                        <p class="text-gray-500 text-sm mb-1">{{ item.productItem.product.category?.categoryName || 'Plant' }}</p>
+                                        
+                                        {{-- Indikator Stok --}}
+                                        <p class="text-xs font-medium {{ item.productItem.qtyInStock < 5 ? 'text-red-500' : 'text-gray-500' }}">
+                                            Sisa Stok: {{ item.productItem.qtyInStock }}
+                                        </p>
+
+                                        <p class="font-bold text-green-600 mt-1">$ {{ item.productItem.price }}</p>
                                     </div>
 
                                     {{-- Actions (Update Qty & Delete) --}}
                                     <div class="flex flex-col items-end gap-3">
+                                        
                                         {{-- Form Update Quantity --}}
-                                        <form action="{{ route('cart.update', { id: item.id }) }}" method="POST" class="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                                        <form action="{{ route('cart.update', { id: item.id }) }}" method="POST" class="flex items-center border border-gray-300 rounded-lg overflow-hidden w-32">
                                             {{ csrfField() }}
-                                            {{-- Tombol Minus --}}
-                                            <button type="submit" name="quantity" value="{{ item.quantity - 1 }}" class="px-3 py-1 hover:bg-gray-100 text-gray-600 font-bold transition">−</button>
                                             
-                                            {{-- Display Angka --}}
-                                            <input type="text" value="{{ item.quantity }}" class="w-10 text-center text-sm font-semibold border-none focus:ring-0 p-0" readonly>
+                                            {{-- Tombol Minus (JS Trigger) --}}
+                                            <button type="button" onclick="updateCartQty(this, -1)" class="px-3 py-2 hover:bg-gray-100 text-gray-600 font-bold transition flex-shrink-0">−</button>
                                             
-                                            {{-- Tombol Plus --}}
-                                            <button type="submit" name="quantity" value="{{ item.quantity + 1 }}" class="px-3 py-1 hover:bg-gray-100 text-green-600 font-bold transition">+</button>
+                                            {{-- Input Editable (Ketik Langsung) --}}
+                                            <input 
+                                                type="number" 
+                                                name="quantity" 
+                                                value="{{ item.quantity }}" 
+                                                min="1" 
+                                                max="{{ item.productItem.qtyInStock }}"
+                                                class="w-full text-center text-sm font-semibold border-none focus:ring-0 p-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                onchange="this.form.submit()"
+                                            >
+                                            
+                                            {{-- Tombol Plus (JS Trigger) --}}
+                                            <button 
+                                                type="button" 
+                                                onclick="updateCartQty(this, 1)" 
+                                                class="px-3 py-2 hover:bg-gray-100 text-green-600 font-bold transition flex-shrink-0 {{ item.quantity >= item.productItem.qtyInStock ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                {{ item.quantity >= item.productItem.qtyInStock ? 'disabled' : '' }}
+                                            >
+                                                +
+                                            </button>
                                         </form>
 
                                         {{-- Form Remove --}}
@@ -125,3 +148,23 @@
         </div>
     @end
 @end
+
+<script>
+    // Helper untuk tombol +/- di halaman Cart
+    // Tombol ini mengubah nilai input, lalu mensubmit form pembungkusnya
+    function updateCartQty(btn, change) {
+        const form = btn.closest('form');
+        const input = form.querySelector('input[name="quantity"]');
+        
+        let currentVal = parseInt(input.value) || 0;
+        const maxStock = parseInt(input.getAttribute('max')) || 999;
+        let newVal = currentVal + change;
+
+        // Validasi sisi klien
+        if (newVal < 1) return; // Tidak boleh kurang dari 1 (gunakan tombol remove untuk hapus)
+        if (newVal > maxStock) return; // Tidak boleh lebih dari stok
+
+        input.value = newVal;
+        form.submit(); // Submit form otomatis
+    }
+</script>
