@@ -2,36 +2,50 @@
 @set('title', 'Plantopia')
 
     @slot('main')
-    <!-- Hero Section -->
     <section class="bg-green-600 text-white py-20 md:py-32">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                {{-- Left Content --}}
                 <div class="space-y-6">
                     <h1 class="text-5xl md:text-6xl font-bold leading-tight">
                         Welcome to Plantopia
                     </h1>
                     <p class="text-lg md:text-xl text-green-50 leading-relaxed">
-                        Plantopia merupakan sebuah platform komunitas pecinta tanaman hias. Pengguna bisa saling berbagi pengalaman mereka dalam merawat tanaman dan juga melakukan jual beli tanaman hias. Siap untuk merawat tanaman, yuk bergabung sekarang!
+                        Plantopia merupakan sebuah platform komunitas pecinta tanaman hias. 
+                        Pengguna bisa saling berbagi pengalaman mereka dalam merawat tanaman dan juga melakukan jual beli tanaman hias.
+                        Siap untuk merawat tanaman, yuk bergabung sekarang!
                     </p>
                     <div class="pt-4">
-                        <a href="/marketplace" class="inline-block bg-white text-green-600 px-8 py-3 rounded-lg font-bold hover:bg-green-50 transition-colors duration-200">
+                        <a href="/marketplace" class="inline-block bg-white text-green-600 px-8 py-3 rounded-lg font-bold hover:bg-green-50 transition-colors duration-200 shadow-lg">
                             Explore Now
                         </a>
                     </div>
                 </div>
+                
+                {{-- Right Content (Hero Image) --}}
                 <div class="hidden md:block">
-                    <div class="bg-green-500 rounded-2xl h-96 flex items-center justify-center">
-                        <span class="text-white text-center">
-                            <p class="text-6xl mb-4">🌿</p>
-                            <p class="text-xl font-semibold">Hero Image Placeholder</p>
-                        </span>
+                    <div class="flex flex-col items-center justify-center gap-0">
+                        
+                        {{-- Logo Icon --}}
+                        
+                        <img 
+                            src="/resources/assets/logo/plantopia_light_logo.png" 
+                            class="w-auto h-100 object-contain drop-shadow-2xl animate-fade-in"
+                            alt="Plantopia Logo"
+                        >
+                        
+                        {{-- Logo Text --}}
+                        <img 
+                            src="/resources/assets/logo/plantopia_light_font_logo.png" 
+                            class="h-60 w-auto object-contain drop-shadow-lg animate-fade-in -mt-26"
+                            alt="Plantopia Text"
+                        >
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Call to Action Section - Get Started -->
     <section class="bg-white py-20 md:py-28">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center space-y-6 max-w-3xl mx-auto">
@@ -39,7 +53,8 @@
                     Ready to Start Your Plant Journey?
                 </h2>
                 <p class="text-lg text-gray-600 leading-relaxed">
-                    Join thousands of plant enthusiasts who have already transformed their spaces. Get access to exclusive deals, care guides, and our thriving community of plant lovers.
+                    Join thousands of plant enthusiasts who have already transformed their spaces.
+                    Get access to exclusive deals, care guides, and our thriving community of plant lovers.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center pt-6">
                     <a href="/register" class="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200">
@@ -53,7 +68,6 @@
         </div>
     </section>
 
-    <!-- Product Recommendations Section -->
     <section class="bg-green-600 text-white py-20 md:py-28">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="mb-12">
@@ -65,44 +79,41 @@
                 </p>
             </div>
 
-            <!-- Products Container Placeholder -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                <div class="bg-green-500 rounded-xl h-64 flex items-center justify-center">
+                <div class="bg-green-500 rounded-xl h-64 flex items-center justify-center border border-green-400 hover:bg-green-400 transition cursor-pointer">
                     <span class="text-white text-center">
                         <p class="text-4xl mb-2">🌱</p>
-                        <p class="font-semibold">Product 1</p>
+                        <p class="font-semibold">Monstera</p>
                     </span>
                 </div>
-                <div class="bg-green-500 rounded-xl h-64 flex items-center justify-center">
+                <div class="bg-green-500 rounded-xl h-64 flex items-center justify-center border border-green-400 hover:bg-green-400 transition cursor-pointer">
                     <span class="text-white text-center">
                         <p class="text-4xl mb-2">🌿</p>
-                        <p class="font-semibold">Product 2</p>
+                        <p class="font-semibold">Snake Plant</p>
                     </span>
                 </div>
-                <div class="bg-green-500 rounded-xl h-64 flex items-center justify-center">
+                <div class="bg-green-500 rounded-xl h-64 flex items-center justify-center border border-green-400 hover:bg-green-400 transition cursor-pointer">
                     <span class="text-white text-center">
                         <p class="text-4xl mb-2">🍃</p>
-                        <p class="font-semibold">Product 3</p>
+                        <p class="font-semibold">Fiddle Leaf</p>
                     </span>
                 </div>
-                <div class="bg-green-500 rounded-xl h-64 flex items-center justify-center">
+                <div class="bg-green-500 rounded-xl h-64 flex items-center justify-center border border-green-400 hover:bg-green-400 transition cursor-pointer">
                     <span class="text-white text-center">
                         <p class="text-4xl mb-2">🌾</p>
-                        <p class="font-semibold">Product 4</p>
+                        <p class="font-semibold">Peace Lily</p>
                     </span>
                 </div>
             </div>
 
-            <!-- CTA for Products -->
             <div class="text-center">
-                <a href="/marketplace" class="inline-block bg-white text-green-600 px-8 py-3 rounded-lg font-bold hover:bg-green-50 transition-colors duration-200">
+                <a href="/marketplace" class="inline-block bg-white text-green-600 px-8 py-3 rounded-lg font-bold hover:bg-green-50 transition-colors duration-200 shadow-lg">
                     View All Products
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- Social Media Features Section -->
     <section class="bg-white py-20 md:py-28">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="mb-12">
@@ -114,23 +125,22 @@
                 </p>
             </div>
 
-            <!-- Social Media Features Container Placeholder -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-                <div class="bg-gray-100 rounded-xl p-8 flex items-center justify-center min-h-64">
+                <div class="bg-gray-50 rounded-xl p-8 flex items-center justify-center min-h-64 border border-gray-100 hover:shadow-md transition">
                     <span class="text-center">
                         <p class="text-5xl mb-3">📸</p>
                         <p class="text-lg font-semibold text-gray-700">Photo Gallery</p>
                         <p class="text-gray-600 text-sm mt-2">Share your plant photos</p>
                     </span>
                 </div>
-                <div class="bg-gray-100 rounded-xl p-8 flex items-center justify-center min-h-64">
+                <div class="bg-gray-50 rounded-xl p-8 flex items-center justify-center min-h-64 border border-gray-100 hover:shadow-md transition">
                     <span class="text-center">
                         <p class="text-5xl mb-3">💬</p>
                         <p class="text-lg font-semibold text-gray-700">Community Forum</p>
                         <p class="text-gray-600 text-sm mt-2">Connect with other enthusiasts</p>
                     </span>
                 </div>
-                <div class="bg-gray-100 rounded-xl p-8 flex items-center justify-center min-h-64">
+                <div class="bg-gray-50 rounded-xl p-8 flex items-center justify-center min-h-64 border border-gray-100 hover:shadow-md transition">
                     <span class="text-center">
                         <p class="text-5xl mb-3">🎖️</p>
                         <p class="text-lg font-semibold text-gray-700">Badges & Rewards</p>
@@ -139,9 +149,8 @@
                 </div>
             </div>
 
-            <!-- CTA for Social Features -->
             <div class="text-center">
-                <a href="/socmed" class="inline-block bg-green-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-green-700 transition-colors duration-200">
+                <a href="/socmed" class="inline-block bg-green-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-green-700 transition-colors duration-200 shadow-md">
                     Join the Community
                 </a>
             </div>

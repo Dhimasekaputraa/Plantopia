@@ -56,8 +56,12 @@
                                 <div class="flex text-yellow-400 text-lg">
                                     <span class="font-bold text-gray-900 mr-2">{{ product.averageRating > 0 ? product.averageRating : 'New' }}</span>
                                     @if(product.averageRating > 0)
-                                        @each(star in product.starsFilled) ★ @end
-                                        @each(star in product.starsEmpty) <span class="text-gray-300">★</span> @end
+                                        @each(star in product.starsFilled) 
+                                        ★
+                                        @end
+                                        @each(star in product.starsEmpty) 
+                                            <span class="text-gray-300">★</span> 
+                                        @end
                                     @else
                                         <span class="text-gray-300 text-sm font-normal">No reviews yet</span>
                                     @endif
