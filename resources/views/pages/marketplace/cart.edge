@@ -27,8 +27,7 @@
                                         @if(item.productItem.product.image)
                                             <img src="/{{ item.productItem.product.image }}" class="w-full h-full object-cover">
                                         @else
-                                            <div class="w-full h-full flex items-center justify-center text-3xl">
-                                                {{-- PERBAIKAN: Emoji ditaruh di baris baru --}}
+                                            <div class="w-full h-full flex items-center justify-center text-3xl">   
                                                 @if(item.productItem.product.name.includes('Snake'))
                                                     🌿
                                                 @elseif(item.productItem.product.name.includes('Rose'))

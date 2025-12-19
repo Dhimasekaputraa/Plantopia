@@ -4,20 +4,30 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{-- Menggunakan judul dinamis atau default 'Plantopia' --}}
     <title>{{ title || 'Plantopia' }}</title>
+    
+    {{-- Memuat aset CSS dan JS via Vite --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        /* Utilitas untuk menyembunyikan scrollbar namun tetap bisa discroll */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Animasi fade-in sederhana */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 flex flex-col min-h-screen">
 
-    {{-- FLASH NOTIFICATION --}}
+    {{-- 
+        BAGIAN: Flash Notification 
+        Menampilkan pesan sukses atau error yang dikirim dari controller (session.flash).
+        Otomatis menghilang setelah 3 detik.
+    --}}
     @if(flashMessages.has('notification'))
         <div id="flash-notification" class="fixed top-32 right-4 z-50 animate-fade-in">
             @let(notif = flashMessages.get('notification'))
@@ -26,10 +36,12 @@
                     <h4 class="font-bold text-sm">{{ notif.type === 'success' ? 'Success' : 'Error' }}</h4>
                     <p class="text-sm opacity-90">{{ notif.message }}</p>
                 </div>
+                {{-- Tombol tutup manual --}}
                 <button onclick="document.getElementById('flash-notification').remove()" class="ml-2 opacity-70 hover:opacity-100">✕</button>
             </div>
         </div>
         <script>
+            // Script auto-hide notifikasi
             setTimeout(() => {
                 const el = document.getElementById('flash-notification');
                 if(el) { el.style.opacity = '0'; setTimeout(() => el.remove(), 500); }
@@ -37,40 +49,34 @@
         </script>
     @endif
 
-    {{-- Navbar --}}
+    {{-- BAGIAN: Navbar (Menu Atas) --}}
     <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4">
-            {{-- Height diperbesar jadi h-24 agar logo h-20 muat --}}
             <div class="flex items-center justify-between h-24"> 
                 
-                {{-- Logo Area --}}
+                {{-- 1. Logo Area --}}
                 <a href="/marketplace" class="flex items-center gap-4">
+                    {{-- Logo Gambar --}}
                     <img src="/resources/assets/logo/plantopia_dark_logo.png" class="w-20 h-20 object-contain" onerror="this.style.display='none'">
-                    
-                    {{-- Logo Font diperbesar --}}
+                    {{-- Logo Teks --}}
                     <img src="/resources/assets/logo/plantopia_dark_font_logo.png" class="h-32 w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    
-                    {{-- Fallback --}}
+                    {{-- Fallback jika gambar gagal dimuat --}}
                     <span class="text-4xl hidden">🌿</span>
                     <span class="font-bold text-3xl text-green-900 tracking-tight hidden">Plantopia</span>
                 </a>
 
-                {{-- Desktop Menu --}}
-               <div class="hidden md:flex items-center gap-8">
-                    <a 
-                        href="/marketplace" 
-                        class="text-base font-medium transition relative pb-2 {{ request.url().includes('marketplace') ? 'text-green-600' : 'text-gray-600 hover:text-green-600' }}"
-                    >
+                {{-- 2. Desktop Menu (Tengah) --}}
+                <div class="hidden md:flex items-center gap-8">
+                    {{-- Link ke Market --}}
+                    <a href="/marketplace" class="text-base font-medium transition relative pb-2 {{ request.url().includes('marketplace') ? 'text-green-600' : 'text-gray-600 hover:text-green-600' }}">
                         Market
                         @if(request.url().includes('marketplace'))
                             <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-green-600"></span>
                         @endif
                     </a>
                     
-                    <a 
-                        href="/socmed" 
-                        class="text-base font-medium transition relative pb-2 {{ request.url().includes('socmed') ? 'text-green-600' : 'text-gray-600 hover:text-green-600' }}"
-                    >
+                    {{-- Link ke Community (Socmed) --}}
+                    <a href="/socmed" class="text-base font-medium transition relative pb-2 {{ request.url().includes('socmed') ? 'text-green-600' : 'text-gray-600 hover:text-green-600' }}">
                         Community
                         @if(request.url().includes('socmed'))
                             <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-green-600"></span>
@@ -78,15 +84,16 @@
                     </a>
                 </div>
 
-                {{-- Right Actions --}}
+                {{-- 3. Right Actions (Kanan) --}}
                 <div class="flex items-center gap-4">
                     
-                    {{-- Cart Icon (Disembunyikan jika ada parameter hideCart) --}}
+                    {{-- Ikon Keranjang Belanja (Bisa disembunyikan via props hideCart) --}}
                     @if(!hideCart)
                         <a href="/cart" class="relative p-2 text-gray-600 hover:text-green-600 transition group">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
                             </svg>
+                            {{-- Badge Jumlah Item Cart --}}
                             @if(cartCount && cartCount > 0)
                                 <span class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white animate-bounce">
                                     {{ cartCount }}
@@ -97,6 +104,7 @@
 
                     {{-- Profile Dropdown --}}
                     <div class="relative group">
+                        {{-- Avatar Trigger --}}
                         <button class="w-10 h-10 rounded-full bg-green-100 border border-green-200 overflow-hidden focus:outline-none focus:ring-2 focus:ring-green-500 transition">
                             @if(auth.user && auth.user.profilePicture)
                                 <img src="/{{ auth.user.profilePicture }}" class="w-full h-full object-cover">
@@ -104,6 +112,8 @@
                                 <span class="text-base font-bold text-green-700">{{ auth.user?.firstName?.charAt(0) || 'U' }}</span>
                             @endif
                         </button>
+                        
+                        {{-- Menu Dropdown --}}
                         <div class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right z-50">
                             <div class="px-4 py-3 border-b border-gray-50">
                                 <p class="text-sm font-bold text-gray-900">{{ auth.user?.fullName }}</p>
@@ -112,6 +122,8 @@
                             <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Profile</a>
                             <a href="/marketplace/my-products" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Seller Dashboard</a>
                             <div class="border-t border-gray-50 my-1"></div>
+                            
+                            {{-- Logout Form --}}
                             <form action="{{ route('auth.logout') }}" method="POST">
                                 {{ csrfField() }}
                                 <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-medium">
@@ -125,10 +137,12 @@
         </div>
     </nav>
 
+    {{-- KONTEN UTAMA HALAMAN --}}
     <main class="flex-grow">
         {{{ await $slots.main() }}}
     </main>
 
+    {{-- Footer --}}
     <footer class="bg-white border-t border-gray-100 py-8 mt-auto">
         <div class="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
             <p>&copy; 2025 Plantopia. Growing Happiness.</p>

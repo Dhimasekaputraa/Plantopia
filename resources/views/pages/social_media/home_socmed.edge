@@ -3,7 +3,7 @@
 
     @slot('main')
         <div class="bg-gray-50 min-h-screen py-8">
-            {{-- Header Simple --}}
+            {{-- Header Halaman --}}
             <div class="max-w-2xl mx-auto px-4 mb-6 text-center">
                 <h1 class="text-3xl font-bold text-gray-800 mb-1">Community Feed</h1>
                 <p class="text-gray-500 text-sm">Connect with other plant lovers 🌱</p>
@@ -11,9 +11,10 @@
 
             <div class="max-w-2xl mx-auto px-4">
                 
-                {{-- Create Post Box --}}
+                {{-- BAGIAN: Form Buat Postingan Baru --}}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
                     <div class="flex gap-3">
+                        {{-- Avatar User --}}
                         <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
                             @if(auth.user && auth.user.profilePicture)
                                  <img src="/{{ auth.user.profilePicture }}" class="w-full h-full object-cover">
@@ -21,11 +22,14 @@
                                  <span class="font-bold text-green-700">{{ auth.user?.firstName?.charAt(0) || 'U' }}</span>
                             @endif
                         </div>
+                        
+                        {{-- Form Input --}}
                         <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data" class="flex-1">
                             {{ csrfField() }}
                             <textarea name="content" rows="2" placeholder="What's growing in your garden?" class="w-full bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-green-500 p-3 mb-3 resize-none text-sm"></textarea>
                             
                             <div class="flex justify-between items-center">
+                                {{-- Tombol Upload Gambar --}}
                                 <label class="cursor-pointer text-gray-500 hover:text-green-600 transition flex items-center gap-2 text-xs font-medium">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
@@ -41,12 +45,13 @@
                     </div>
                 </div>
 
-                {{-- Posts List --}}
+                {{-- BAGIAN: Daftar Postingan --}}
                 <div class="space-y-6">
                     @if(posts && posts.length > 0)
                         @each(post in posts)
                             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                                {{-- Post Header --}}
+                                
+                                {{-- Header Post (User Info & Waktu) --}}
                                 <div class="p-4 flex gap-3 items-center">
                                     <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
                                         @if(post.user.profilePicture)
@@ -60,6 +65,7 @@
                                         <p class="text-xs text-gray-500">{{ post.relativeTime }}</p>
                                     </div>
                                     
+                                    {{-- Tombol Hapus (Hanya muncul jika milik user yang login) --}}
                                     @if(auth.user && auth.user.id === post.userId)
                                         <form action="{{ route('posts.destroy', { id: post.id }) }}?_method=DELETE" method="POST" onsubmit="return confirm('Delete post?')">
                                             {{ csrfField() }}
@@ -72,23 +78,22 @@
                                     @endif
                                 </div>
                                 
-                                {{-- Post Content --}}
+                                {{-- Isi Konten Teks --}}
                                 <div class="px-4 pb-2">
                                     <p class="text-gray-800 mb-3 whitespace-pre-line">{{ post.content }}</p>
                                 </div>
                                 
-                                {{-- Post Image (Hanya muncul jika ada gambar) --}}
+                                {{-- Gambar Post (Render jika ada) --}}
                                 @if(post.image)
                                     <div class="bg-gray-100 border-t border-gray-100">
                                         <img src="/{{ post.image }}" class="w-full h-auto object-cover max-h-[500px]">
                                     </div>
                                 @endif
-                                {{-- JIKA TIDAK ADA GAMBAR, TIDAK ADA APAPUN (KOSONG) --}}
 
-                                {{-- Interactions --}}
+                                {{-- Interaksi (Like & Comment Buttons) --}}
                                 <div class="p-4 border-t border-gray-50">
                                     <div class="flex items-center gap-6">
-                                        {{-- Like Button --}}
+                                        {{-- Tombol Like (AJAX) --}}
                                         <button 
                                             onclick="toggleLike({{ post.id }})" 
                                             id="like-btn-{{ post.id }}"
@@ -96,25 +101,26 @@
                                         >
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="{{ post.isLikedByCurrentUser ? 'currentColor' : 'none' }}" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                                            </svg>
+                                             </svg>
                                             <span class="text-sm font-semibold" id="like-count-{{ post.id }}">
                                                 {{ post.totalLikes }}
                                             </span>
                                         </button>
 
-                                        {{-- Comment Button --}}
+                                        {{-- Tombol Buka Komentar --}}
                                         <button onclick="toggleComments({{ post.id }})" class="flex items-center gap-2 text-gray-500 hover:text-green-600 transition">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.69 9-8.25s-4.03-8.25-9-8.25S3 7.44 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z" />
                                             </svg>
-                                            <span class="text-sm font-semibold" id="comment-count-display-{{ post.id }}">
+                                             <span class="text-sm font-semibold" id="comment-count-display-{{ post.id }}">
                                                 {{ post.totalComments }}
                                             </span>
                                         </button>
                                     </div>
 
-                                    {{-- Comments Section (Hidden) --}}
+                                    {{-- Kolom Komentar (Default Hidden) --}}
                                     <div id="comments-section-{{ post.id }}" class="hidden mt-4 pt-4 border-t border-gray-100">
+                                        {{-- List Komentar Lama --}}
                                         <div id="comments-list-{{ post.id }}" class="space-y-3 mb-4 max-h-60 overflow-y-auto custom-scrollbar">
                                             @if(post.comments && post.comments.length > 0)
                                                 @each(comment in post.comments)
@@ -128,6 +134,7 @@
                                             @endif
                                         </div>
 
+                                        {{-- Form Kirim Komentar --}}
                                         <form onsubmit="submitComment(event, {{ post.id }})" class="flex gap-2">
                                             <input type="text" id="comment-input-{{ post.id }}" placeholder="Write a comment..." class="flex-1 bg-gray-50 border-0 rounded-full px-4 py-2 text-sm focus:ring-1 focus:ring-green-500" required>
                                             <button type="submit" class="text-green-600 font-semibold text-sm px-2 hover:text-green-700">Post</button>
@@ -137,6 +144,7 @@
                             </div>
                         @end
                     @else
+                        {{-- Tampilan Kosong --}}
                         <div class="text-center py-12 text-gray-500">
                             <p>No posts yet. Be the first to share!</p>
                         </div>
@@ -147,11 +155,14 @@
     @end
 @end
 
+{{-- SCRIPT INTERAKSI FRONTEND --}}
 <script>
+    // Mengambil token CSRF untuk request Fetch
     function getCsrfToken() {
         return document.querySelector('input[name="_csrf"]').value;
     }
 
+    // Fungsi Like Postingan (Toggle)
     async function toggleLike(postId) {
         try {
             const response = await fetch(`/posts/${postId}/like`, {
@@ -161,15 +172,14 @@
                     'X-CSRF-TOKEN': getCsrfToken()
                 }
             });
-            
             if(response.ok) {
                 const data = await response.json();
                 const btn = document.getElementById(`like-btn-${postId}`);
                 const count = document.getElementById(`like-count-${postId}`);
                 const icon = btn.querySelector('svg');
 
+                // Update UI berdasarkan respon server
                 count.textContent = data.totalLikes;
-
                 if(data.isLiked) {
                     btn.classList.add('text-red-500');
                     btn.classList.remove('text-gray-500');
@@ -185,10 +195,12 @@
         }
     }
 
+    // Toggle Visibility Kolom Komentar
     function toggleComments(postId) {
         document.getElementById(`comments-section-${postId}`).classList.toggle('hidden');
     }
 
+    // Submit Komentar via AJAX
     async function submitComment(e, postId) {
         e.preventDefault();
         const input = document.getElementById(`comment-input-${postId}`);
@@ -206,8 +218,11 @@
                 const data = await response.json();
                 const list = document.getElementById(`comments-list-${postId}`);
                 const noComments = document.getElementById(`no-comments-${postId}`);
+                
+                // Hapus pesan "No comments yet" jika ada
                 if(noComments) noComments.remove();
 
+                // Buat elemen komentar baru dan sisipkan
                 const newComment = document.createElement('div');
                 newComment.className = 'bg-gray-50 p-3 rounded-lg text-sm animate-fade-in';
                 newComment.innerHTML = `<span class="font-bold text-gray-800 mr-1">You:</span><span class="text-gray-700">${content}</span>`;
@@ -215,6 +230,7 @@
                 list.insertBefore(newComment, list.firstChild);
                 input.value = '';
 
+                // Update jumlah komentar
                 const counter = document.getElementById(`comment-count-display-${postId}`);
                 counter.textContent = parseInt(counter.textContent) + 1;
             }
