@@ -6,8 +6,8 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').notNullable()
-      table.integer('user_id').unsigned().references('users.id').notNullable()
-      table.string('image').nullable() //string buat store url, boleh ganti tipe datanya kalo ada yang lebih cocok
+      table.integer('user_id').unsigned().references('users.id').notNullable().onDelete('CASCADE')
+      table.string('image').nullable()
       table.text('content').notNullable()
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()

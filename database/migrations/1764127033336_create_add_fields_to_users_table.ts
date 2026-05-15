@@ -27,7 +27,6 @@ export default class extends BaseSchema {
 
   async down() {
     this.schema.alterTable(this.tableName, (table) => {
-      // Rollback changes
       table.string('full_name').nullable()
       table.dropColumn('first_name')
       table.dropColumn('last_name')

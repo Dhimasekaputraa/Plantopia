@@ -6,11 +6,8 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').notNullable()
-      
-      // [DIPERBAIKI] Sesuaikan dengan Seeder
-      table.string('name').notNullable()       // Ganti 'status' jadi 'name'
-      table.string('description').nullable()   // Tambah kolom description
-
+      table.string('name').notNullable()       
+      table.string('description').nullable()   
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()
     })

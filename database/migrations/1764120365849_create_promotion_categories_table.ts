@@ -6,8 +6,8 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').notNullable
-      table.integer('product_category_id').unsigned().references('product_category.id').notNullable()
-      table.integer('promotion_id').unsigned().references('promotions.id').notNullable
+      table.integer('product_category_id').unsigned().references('product_category.id').notNullable().onDelete('CASCADE')
+      table.integer('promotion_id').unsigned().references('promotions.id').notNullable().onDelete('CASCADE')
       table.string('name').notNullable().unique()
       table.timestamp('created_at')
       table.timestamp('updated_at')
