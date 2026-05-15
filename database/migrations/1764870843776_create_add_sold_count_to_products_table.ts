@@ -5,7 +5,6 @@ export default class extends BaseSchema {
 
   async up() {
     this.schema.alterTable(this.tableName, (table) => {
-      // Tambah kolom sold_count, default 0 (belum ada yang beli)
       table.integer('sold_count').defaultTo(0)
     })
   }

@@ -5,7 +5,6 @@ export default class extends BaseSchema {
 
   async up() {
     this.schema.alterTable(this.tableName, (table) => {
-      // Menambahkan kolom is_seller, default false (Buyer)
       table.boolean('is_seller').defaultTo(false)
     })
   }
