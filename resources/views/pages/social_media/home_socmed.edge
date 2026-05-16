@@ -78,15 +78,17 @@
                                     @endif
                                 </div>
                                 
-                                {{-- Isi Konten Teks --}}
-                                <div class="px-4 pb-2">
-                                    <p class="text-gray-800 mb-3 whitespace-pre-line">{{ post.content }}</p>
-                                </div>
+                                {{-- Post Content --}}
+                                @if(post.content)
+                                    <div class="px-4 pb-2">
+                                        <p class="text-gray-800 mb-3 whitespace-pre-line">{{ post.content }}</p>
+                                    </div>
+                                @endif
                                 
                                 {{-- Gambar Post (Render jika ada) --}}
                                 @if(post.image)
                                     <div class="bg-gray-100 border-t border-gray-100">
-                                        <img src="/{{ post.image }}" class="w-full h-auto object-cover max-h-[500px]">
+                                        <img src="/{{ post.image }}" class="w-full h-auto object-cover">
                                     </div>
                                 @endif
 

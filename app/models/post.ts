@@ -20,7 +20,7 @@ export default class Post extends BaseModel {
   declare image: string | null // string buat store url
 
   @column()
-  declare content: string
+  declare content: string | null
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
