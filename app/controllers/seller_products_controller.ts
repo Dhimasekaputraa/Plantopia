@@ -4,13 +4,14 @@ import ProductItem from '#models/product_item'
 import ProductCategory from '#models/product_category'
 import app from '@adonisjs/core/services/app'
 import { cuid } from '@adonisjs/core/helpers'
+import { createProductValidator, updateProductValidator } from '#validators/product_validator'
 
 export default class SellerProductController {
 
   // 1. LIST PRODUK (READ)
   async index({ view, auth }: HttpContext) {
     const user = auth.user!
-    
+
     // Ambil produk user, urutkan dari yang terbaru
     const products = await Product.query()
       .where('userId', user.id)
@@ -30,8 +31,8 @@ export default class SellerProductController {
   // 3. PROSES SIMPAN (STORE)
   async store({ request, response, auth, session }: HttpContext) {
     const user = auth.user!
-    const data = request.all()
-    
+    const data = await request.validateUsing(createProductValidator) // Data produk yang diupload divalidasi dari validator
+
     // Upload Gambar
     const image = request.file('image', {
       size: '2mb',
@@ -51,7 +52,7 @@ export default class SellerProductController {
       userId: user.id,
       productCategoryId: data.category_id,
       name: data.name,
-      description: data.description,
+      description: data.description ?? null,
       image: imagePath,
     })
 
@@ -70,7 +71,7 @@ export default class SellerProductController {
   // 4. FORM EDIT (UPDATE VIEW)
   async edit({ view, params, auth, response }: HttpContext) {
     const user = auth.user!
-    
+
     // Pastikan produk milik user yang login
     const product = await Product.query()
       .where('id', params.id)
@@ -98,7 +99,7 @@ export default class SellerProductController {
       return response.redirect('/marketplace/my-products')
     }
 
-    const data = request.all()
+    const data = await request.validateUsing(updateProductValidator) // Data juga divalidasi dari validator
     const image = request.file('image', {
       size: '2mb',
       extnames: ['jpg', 'png', 'jpeg'],
@@ -114,7 +115,7 @@ export default class SellerProductController {
 
     // Update Info Utama
     product.name = data.name
-    product.description = data.description
+    product.description = data.description ?? null
     product.productCategoryId = data.category_id
     await product.save()
 
@@ -133,7 +134,7 @@ export default class SellerProductController {
   // 6. PROSES HAPUS (DELETE)
   async destroy({ params, response, auth, session }: HttpContext) {
     const user = auth.user!
-    
+
     const product = await Product.query()
       .where('id', params.id)
       .where('userId', user.id)
@@ -141,7 +142,7 @@ export default class SellerProductController {
 
     if (product) {
       await product.delete() // Hapus produk (Items ikut terhapus karena Cascade)
-      
+
       session.flash('notification', { type: 'success', message: 'Product deleted successfully!' })
     }
 
