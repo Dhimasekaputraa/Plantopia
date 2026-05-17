@@ -5,72 +5,175 @@ import User from '#models/user'
 import Post from '#models/post'
 import Product from '#models/product'
 import UserAddress from '#models/user_address'
+import Promotion from '#models/promotion'
+import UserPromotion from '#models/user_promotion'
 import hash from '@adonisjs/core/services/hash'
 import app from '@adonisjs/core/services/app'
 import fs from 'node:fs/promises'
+import { DateTime } from 'luxon'
 
 export default class ProfileController {
-  
+
   /**
    * Menampilkan Halaman Profil Utama
    * Memuat data User, Posts, Products, dan Alamat
    */
-  async show({ view, auth, params}: HttpContext) {
+  async show({ view, auth, params }: HttpContext) {
     let user
-    if (params.id){
-      user = await User.query().where('id',params.id).firstOrFail()
-    }else{
+    if (params.id) {
+      user = await User.query().where('id', params.id).firstOrFail()
+    } else {
       user = auth.user!
     }
-    
+
 
     // 1. Ambil Postingan User (Urutkan dari terbaru)
     const posts = await Post.query()
-        .where('userId', user.id)
-        .orderBy('createdAt', 'desc')
-        .preload('user')
-        .preload('likes')
-        .preload('comments')
+      .where('userId', user.id)
+      .orderBy('createdAt', 'desc')
+      .preload('user')
+      .preload('likes')
+      .preload('comments')
 
     // 2. Ambil Produk User (Urutkan dari terbaru)
     const products = await Product.query()
-        .where('userId', user.id)
-        .orderBy('createdAt', 'desc')
-        .preload('items') // Untuk menampilkan harga
+      .where('userId', user.id)
+      .orderBy('createdAt', 'desc')
+      .preload('items') // Untuk menampilkan harga
 
     // 3. Ambil Alamat (Untuk ditampilkan di dashboard)
     const userAddresses = await UserAddress.query()
-        .where('userId', user.id)
-        .preload('address', (q) => q.preload('country'))
+      .where('userId', user.id)
+      .preload('address', (q) => q.preload('country'))
 
-    return view.render('pages/profile/profile', { 
-        user, 
-        posts, 
-        products,
-        userAddresses 
+    // 4. Ambil Voucher yang diklaim oleh User (dan aktif)
+    const now = new Date()
+    const claimed = await UserPromotion.query()
+      .where('userId', user.id)
+      .preload('promotion')
+
+    const vouchers = claimed
+      .map(up => up.promotion)
+      .filter(p => p && p.startDate.toJSDate() <= now && p.endDate.toJSDate() >= now)
+      .sort((a, b) => b.discount - a.discount)
+
+    return view.render('pages/profile/profile', {
+      user,
+      posts,
+      products,
+      userAddresses,
+      vouchers
     })
   }
 
-  
+  /**
+   * Mengklaim Kode Promo Voucher
+   */
+  async claimVoucher({ auth, request, response, session }: HttpContext) {
+    const user = auth.user!
+    const { code } = request.only(['code'])
+
+    if (!code) {
+      session.flash('notification', {
+        type: 'error',
+        message: 'Kode voucher tidak boleh kosong.'
+      })
+      return response.redirect().back()
+    }
+
+    const promoName = code.trim().toUpperCase()
+
+    // 1. Cari Promotion dengan name exact match
+    let promotion = await Promotion.query()
+      .where('name', promoName)
+      .first()
+
+    // 2. Jika tidak ditemukan, coba buat otomatis dari kode preset/predefined
+    const PREDEFINED_CODES: Record<string, { discount: number, description: string }> = {
+      'FIRSTPLAN10': { discount: 0.25, description: 'Enjoy a premium 25% discount on your plant orders. Happy planting!' },
+      'SUNNYDAY5': { discount: 0.05, description: 'Warm weather savings! Grab a 5% discount off your total price.' },
+      'GOOD13S': { discount: 0.13, description: 'Lucky savings! Get 13% off on your botanical order.' },
+      'GOOOD13S': { discount: 0.13, description: 'Lucky savings! Get 13% off on your botanical order.' }, // Toleransi salah ketik
+    }
+
+    if (!promotion) {
+      const preset = PREDEFINED_CODES[promoName]
+      if (preset) {
+        promotion = await Promotion.create({
+          name: promoName,
+          description: preset.description,
+          discount: preset.discount,
+          startDate: DateTime.now().minus({ days: 5 }),
+          endDate: DateTime.now().plus({ days: 60 })
+        })
+      }
+    }
+
+    if (!promotion) {
+      session.flash('notification', {
+        type: 'error',
+        message: 'Kode voucher tidak valid.'
+      })
+      return response.redirect().back()
+    }
+
+    // 3. Cek apakah aktif
+    const now = new Date()
+    if (promotion.startDate.toJSDate() > now || promotion.endDate.toJSDate() < now) {
+      session.flash('notification', {
+        type: 'error',
+        message: 'Voucher ini sudah kedaluwarsa atau belum dimulai.'
+      })
+      return response.redirect().back()
+    }
+
+    // 4. Cek apakah user sudah mengklaim voucher ini
+    const existingClaim = await UserPromotion.query()
+      .where('userId', user.id)
+      .where('promotionId', promotion.id)
+      .first()
+
+    if (existingClaim) {
+      session.flash('notification', {
+        type: 'error',
+        message: 'Anda sudah menambahkan voucher ini.'
+      })
+      return response.redirect().back()
+    }
+
+    // 5. Klaim Voucher
+    await UserPromotion.create({
+      userId: user.id,
+      promotionId: promotion.id
+    })
+
+    session.flash('notification', {
+      type: 'success',
+      message: `Voucher "${promotion.name}" berhasil ditambahkan ke wallet Anda!`
+    })
+    return response.redirect().back()
+  }
+
+
 
   /**
    * Menampilkan Halaman Pengaturan (Settings)
    */
   async settings({ view, auth }: HttpContext) {
     const user = auth.user!
-    
+
     // Ambil data negara & alamat untuk form
     // (Asumsi Anda punya model Country, jika tidak, bisa dihapus bagian ini)
     const countries = await import('#models/country').then(mod => mod.default.all())
-    
+
     const userAddresses = await UserAddress.query()
       .where('userId', user.id)
       .preload('address', (q) => q.preload('country'))
 
-    return view.render('pages/profile/settings', { 
+    return view.render('pages/profile/settings', {
       user,
-      countries, 
-      userAddresses 
+      countries,
+      userAddresses
     })
   }
 
@@ -108,7 +211,7 @@ export default class ProfileController {
       await avatar.move(app.publicPath('uploads/avatars'), {
         name: `${user.id}_${new Date().getTime()}.${avatar.extname}`
       })
-      
+
       user.profilePicture = `uploads/avatars/${avatar.fileName}`
     }
 
@@ -182,7 +285,7 @@ export default class ProfileController {
   async addAddress({ request, auth, response }: HttpContext) {
     const user = auth.user!
     const data = request.only(['unitNumber', 'street', 'city', 'region', 'countryId'])
-    
+
     // 1. Buat Address Baru
     const Address = (await import('#models/address')).default
     const address = await Address.create(data)
@@ -205,10 +308,10 @@ export default class ProfileController {
 
   async setDefaultAddress({ auth, params, response }: HttpContext) {
     const user = auth.user!
-    
+
     // Reset semua jadi false
     await UserAddress.query().where('userId', user.id).update({ isDefault: false })
-    
+
     // Set yang dipilih jadi true
     const target = await UserAddress.findOrFail(params.id)
     target.isDefault = true
