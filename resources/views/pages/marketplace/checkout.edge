@@ -78,10 +78,34 @@
                                 @end
                             </div>
 
+                            {{-- Hidden Input for Voucher ID --}}
+                            <input type="hidden" name="promotionId" id="promotion-id-input" value="">
+
+                            {{-- Voucher Selection --}}
+                            <div class="border-t border-gray-200 pt-4 mb-4">
+                                <label for="voucher-select" class="block text-sm font-bold text-gray-700 mb-2">🏷️ Apply Voucher</label>
+                                <div class="relative">
+                                    <select id="voucher-select" onchange="applyVoucher()" class="w-full bg-gray-50 border border-gray-200 text-gray-700 py-2 px-3 pr-8 rounded-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent cursor-pointer">
+                                        <option value="" data-discount="0">Select a voucher...</option>
+                                        @each(voucher in vouchers)
+                                            <option value="{{ voucher.id }}" data-discount="{{ voucher.discount }}">{{ voucher.name }} ({{ Math.round(voucher.discount * 100) }}% OFF)</option>
+                                        @end
+                                    </select>
+                                </div>
+                            </div>
+
                             <div class="border-t border-gray-200 pt-4 space-y-2 mb-6">
-                                <div class="flex justify-between text-xl font-bold text-gray-900 pt-2">
-                                    <span>Total</span>
+                                <div class="flex justify-between text-sm font-semibold text-gray-600">
+                                    <span>Subtotal</span>
                                     <span>$ {{ subtotal }}</span>
+                                </div>
+                                <div id="discount-row" class="flex justify-between text-sm font-semibold text-green-600 hidden">
+                                    <span>Discount</span>
+                                    <span id="discount-amount">- $ 0</span>
+                                </div>
+                                <div class="flex justify-between text-xl font-bold text-gray-900 pt-2 border-t border-gray-100">
+                                    <span>Total</span>
+                                    <span id="display-total">$ {{ subtotal }}</span>
                                 </div>
                             </div>
 
@@ -93,5 +117,35 @@
                 </form>
             </div>
         </div>
+
+        <script>
+            const subtotal = {{ subtotal }};
+            
+            function applyVoucher() {
+                const select = document.getElementById('voucher-select');
+                const selectedOption = select.options[select.selectedIndex];
+                const discountRate = parseFloat(selectedOption.getAttribute('data-discount') || '0');
+                const voucherId = selectedOption.value;
+                
+                const discountRow = document.getElementById('discount-row');
+                const discountAmountSpan = document.getElementById('discount-amount');
+                const displayTotalSpan = document.getElementById('display-total');
+                const hiddenInput = document.getElementById('promotion-id-input');
+                
+                hiddenInput.value = voucherId;
+                
+                if (discountRate > 0) {
+                    const discountVal = Math.round(subtotal * discountRate);
+                    const finalTotal = subtotal - discountVal;
+                    
+                    discountAmountSpan.textContent = `- $ ${discountVal}`;
+                    displayTotalSpan.textContent = `$ ${finalTotal}`;
+                    discountRow.classList.remove('hidden');
+                } else {
+                    displayTotalSpan.textContent = `$ ${subtotal}`;
+                    discountRow.classList.add('hidden');
+                }
+            }
+        </script>
     @end
 @end
