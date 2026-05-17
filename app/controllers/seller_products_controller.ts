@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Product from '#models/product'
 import ProductItem from '#models/product_item'
 import ProductCategory from '#models/product_category'
+import ShopOrder from '#models/shop_order'
 import app from '@adonisjs/core/services/app'
 import { cuid } from '@adonisjs/core/helpers'
 import { createProductValidator, updateProductValidator } from '#validators/product_validator'
@@ -19,7 +20,26 @@ export default class SellerProductController {
       .preload('items')
       .orderBy('createdAt', 'desc')
 
-    return view.render('pages/marketplace/seller/my_products', { products })
+    // Ambil pesanan yang mengandung produk seller ini
+    const orders = await ShopOrder.query()
+      .whereHas('items', (itemQuery) => {
+        itemQuery.whereHas('productItem', (productItemQuery) => {
+          productItemQuery.whereHas('product', (productQuery) => {
+            productQuery.where('userId', user.id)
+          })
+        })
+      })
+      .preload('user')
+      .preload('items', (itemQuery) => {
+        itemQuery.whereHas('productItem', (productItemQuery) => {
+          productItemQuery.whereHas('product', (productQuery) => {
+            productQuery.where('userId', user.id)
+          })
+        })
+      })
+      .orderBy('createdAt', 'desc')
+
+    return view.render('pages/marketplace/seller/my_products', { products, orders })
   }
 
   // 2. FORM TAMBAH (CREATE)
