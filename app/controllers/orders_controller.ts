@@ -2,8 +2,9 @@ import type { HttpContext } from '@adonisjs/core/http'
 import ShoppingCart from '#models/shopping_cart'
 import ShopOrder from '#models/shop_order'
 import OrderedProduct from '#models/ordered_product'
-import ProductItem from '#models/product_item'
 import UserAddress from '#models/user_address'
+import Promotion from '#models/promotion'
+import UserPromotion from '#models/user_promotion'
 import db from '@adonisjs/lucid/services/db'
 import { DateTime } from 'luxon'
 
@@ -49,15 +50,27 @@ session.flash('error', 'Anda harus mengisi alamat pengiriman di Profil sebelum m
       subtotal += item.quantity * item.productItem.price
     })
 
+    // Fetch active promotions/vouchers claimed by user
+    const now = DateTime.now()
+    const claimed = await UserPromotion.query()
+      .where('userId', user.id)
+      .preload('promotion')
+
+    const vouchers = claimed
+      .map(up => up.promotion)
+      .filter(p => p && p.startDate.toJSDate() <= now.toJSDate() && p.endDate.toJSDate() >= now.toJSDate())
+      .sort((a, b) => b.discount - a.discount)
+
     return view.render('pages/marketplace/checkout', { 
       cart, 
       subtotal, 
+      vouchers,
       address: userAddress.address // Kirim data alamat ke view
     })
   }
 
   // 2. Proses Checkout (Simpan Order)
-  async store({ auth, session, response }: HttpContext) {
+  async store({ auth, request, session, response }: HttpContext) {
     const user = auth.user!
     const trx = await db.transaction() 
 
@@ -78,7 +91,7 @@ session.flash('error', 'Anda harus mengisi alamat pengiriman di Profil sebelum m
       // Ambil Keranjang
       const cart = await ShoppingCart.query({ client: trx })
         .where('user_id', user.id)
-        .preload('items', (q) => q.preload('productItem'))
+        .preload('items', (q) => q.preload('productItem', (pi) => pi.preload('product')))
         .first()
 
       if (!cart || cart.items.length === 0) {
@@ -86,10 +99,60 @@ session.flash('error', 'Anda harus mengisi alamat pengiriman di Profil sebelum m
         return response.redirect('/marketplace')
       }
 
+      // [BARU] VALIDASI: Seller dilarang beli barang sendiri
+      for (const item of cart.items) {
+        if (item.productItem.product.userId === user.id) {
+          await trx.rollback()
+          session.flash('notification', { 
+            type: 'error', 
+            message: `Checkout gagal! Anda tidak diperbolehkan membeli produk Anda sendiri (${item.productItem.product.name}).` 
+          })
+          return response.redirect().back()
+        }
+      }
+
       let orderTotal = 0
       cart.items.forEach(item => {
         orderTotal += item.quantity * item.productItem.price
       })
+
+      // Handle Voucher / Discount
+      const promotionId = request.input('promotionId')
+      let discountAmount = 0
+      let finalPromotionId: number | null = null
+
+      if (promotionId) {
+        // Cek apakah user telah mengklaim voucher ini
+        const hasClaimed = await UserPromotion.query({ client: trx })
+          .where('userId', user.id)
+          .where('promotionId', promotionId)
+          .first()
+
+        if (!hasClaimed) {
+          await trx.rollback()
+          session.flash('notification', { 
+            type: 'error', 
+            message: 'Anda belum mengklaim voucher ini.' 
+          })
+          return response.redirect().back()
+        }
+
+        const promotion = await Promotion.query({ client: trx }).where('id', promotionId).first()
+        const now = DateTime.now()
+        if (promotion && promotion.startDate <= now && promotion.endDate >= now) {
+          finalPromotionId = promotion.id
+          discountAmount = Math.round(orderTotal * promotion.discount)
+        } else {
+          await trx.rollback()
+          session.flash('notification', { 
+            type: 'error', 
+            message: 'Voucher tidak valid atau sudah kedaluwarsa.' 
+          })
+          return response.redirect().back()
+        }
+      }
+
+      const finalTotal = orderTotal - discountAmount
 
       // Simpan Pesanan
       const order = await ShopOrder.create({
@@ -100,45 +163,33 @@ session.flash('error', 'Anda harus mengisi alamat pengiriman di Profil sebelum m
         addressId: userAddress.addressId, // Pakai ID Alamat dari Profil
         userPaymentMethodId: null, // Null karena COD
         deliveryAddress: userAddress.address.fullAddress || userAddress.address.street, // Snapshot Teks
-        orderTotal: orderTotal
+        orderTotal: finalTotal,
+        promotionId: finalPromotionId,
+        discountAmount: discountAmount
       }, { client: trx })
 
-      // D. Pindahkan Item & Update Data Produk
+      // D. Simpan Item Pesanan (Tanpa potong stok dulu, nunggu Seller Accept)
       for (const item of cart.items) {
-        // 1. Simpan ke OrderedProduct
         await OrderedProduct.create({
           shopOrderId: order.id,
           productItemId: item.productItemId,
           quantity: item.quantity,
           price: item.productItem.price
         }, { client: trx })
-
-        // 2. AMBIL VARIANT PRODUCT ITEM & KURANGI STOK
-        const productItem = await ProductItem.findOrFail(item.productItemId, { client: trx })
-        productItem.qtyInStock = productItem.qtyInStock - item.quantity
-        
-        // Cek stok minus
-        if (productItem.qtyInStock < 0) {
-            throw new Error(`Stok habis untuk produk ID: ${item.productItemId}`)
-        }
-        await productItem.save()
-
-        // 3. [BARU] AMBIL PRODUK INDUK & TAMBAH SOLD COUNT
-        // Kita perlu load produk induknya dulu dari item
-        await productItem.load('product') 
-        const product = productItem.product
-        
-        // Update Sold Count
-        product.soldCount = (product.soldCount || 0) + item.quantity
-        
-        // Simpan perubahan produk menggunakan transaksi yang sama
-        product.useTransaction(trx)
-        await product.save()
       }
     
 
       // Hapus Keranjang & Commit
       await cart.related('items').query().delete()
+
+      // Hapus voucher dari dompet user (karena sudah digunakan)
+      if (promotionId) {
+        await UserPromotion.query({ client: trx })
+          .where('userId', user.id)
+          .where('promotionId', promotionId)
+          .delete()
+      }
+
       await trx.commit()
 
       session.flash('notification', {
