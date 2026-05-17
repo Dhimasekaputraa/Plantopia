@@ -4,11 +4,11 @@ import ShoppingCartItem from '#models/shopping_cart_item'
 import ProductItem from '#models/product_item'
 
 export default class ShoppingCartsController {
-  
+
   // Menampilkan Halaman Keranjang
   async show({ view, auth }: HttpContext) {
     const user = auth.user!
-    
+
     const cart = await ShoppingCart.query()
       .where('user_id', user.id)
       .preload('items', (itemsQuery) => {
@@ -27,8 +27,20 @@ export default class ShoppingCartsController {
     const { productItemId, quantity } = request.only(['productItemId', 'quantity'])
     const qtyToAdd = parseInt(quantity)
 
-    // 1. Ambil Data Product Item untuk cek stok fisik
-    const productItem = await ProductItem.findOrFail(productItemId)
+    // 1. Ambil Data Product Item untuk cek stok fisik & kepemilikan
+    const productItem = await ProductItem.query()
+      .where('id', productItemId)
+      .preload('product')
+      .firstOrFail()
+
+    // [BARU] VALIDASI: Seller dilarang beli barang sendiri
+    if (productItem.product.userId === user.id) {
+      session.flash('notification', {
+        type: 'error',
+        message: 'Anda tidak bisa menambahkan produk Anda sendiri ke keranjang.'
+      })
+      return response.redirect().back()
+    }
 
     // 2. Buat/Ambil Keranjang User
     const cart = await ShoppingCart.firstOrCreate(
@@ -48,11 +60,11 @@ export default class ShoppingCartsController {
 
     // 5. VALIDASI STOK: Jika total melebihi stok yang tersedia
     if (finalQty > productItem.qtyInStock) {
-        session.flash('notification', {
-            type: 'error',
-            message: `Stok tidak cukup! Hanya tersisa ${productItem.qtyInStock} barang.`
-        })
-        return response.redirect().back()
+      session.flash('notification', {
+        type: 'error',
+        message: `Stok tidak cukup! Hanya tersisa ${productItem.qtyInStock} barang.`
+      })
+      return response.redirect().back()
     }
 
     // 6. Simpan ke database jika lolos validasi
@@ -78,7 +90,7 @@ export default class ShoppingCartsController {
   // Update Quantity (Dengan Validasi Stok)
   async update({ request, response, params, session }: HttpContext) {
     const quantity = parseInt(request.input('quantity'))
-    
+
     // Gunakan find() biasa
     const item = await ShoppingCartItem.find(params.id)
 
@@ -90,11 +102,11 @@ export default class ShoppingCartsController {
       if (quantity > 0) {
         // VALIDASI STOK SAAT UPDATE (+ Tombol Plus)
         if (quantity > item.productItem.qtyInStock) {
-            session.flash('notification', {
-                type: 'error',
-                message: `Maksimal stok tersedia hanya ${item.productItem.qtyInStock}.`
-            })
-            return response.redirect().back()
+          session.flash('notification', {
+            type: 'error',
+            message: `Maksimal stok tersedia hanya ${item.productItem.qtyInStock}.`
+          })
+          return response.redirect().back()
         }
 
         item.quantity = quantity
@@ -111,7 +123,7 @@ export default class ShoppingCartsController {
   // Hapus Item (VERSI AMAN)
   async remove({ params, response }: HttpContext) {
     const item = await ShoppingCartItem.find(params.id)
-    
+
     if (item) {
       await item.delete()
     }
