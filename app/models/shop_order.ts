@@ -4,6 +4,7 @@ import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import User from '#models/user'
 import Address from '#models/address' // Pastikan import ini ada
 import OrderedProduct from '#models/ordered_product'
+import Promotion from '#models/promotion'
 
 export default class ShopOrder extends BaseModel {
   @column({ isPrimary: true })
@@ -28,6 +29,12 @@ export default class ShopOrder extends BaseModel {
   declare orderTotal: number
 
   @column()
+  declare promotionId: number | null
+
+  @column()
+  declare discountAmount: number
+
+  @column()
   declare deliveryAddress: string // Snapshot Teks
 
   @column.dateTime()
@@ -45,6 +52,9 @@ export default class ShopOrder extends BaseModel {
 
   @belongsTo(() => Address)
   declare address: BelongsTo<typeof Address>
+
+  @belongsTo(() => Promotion)
+  declare promotion: BelongsTo<typeof Promotion>
 
   @hasMany(() => OrderedProduct)
   declare items: HasMany<typeof OrderedProduct>
