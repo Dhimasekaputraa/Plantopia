@@ -1,0 +1,102 @@
+@layouts.market()
+
+<div class="max-w-7xl mx-auto py-10 px-4">
+  <div class="flex justify-between items-end mb-8">
+    <div>
+      <h1 class="text-4xl font-black text-gray-900 tracking-tight">My Orders</h1>
+      <p class="text-gray-500 mt-2">Track your purchases and transaction status</p>
+    </div>
+    <div class="bg-green-50 px-4 py-2 rounded-xl border border-green-100">
+      <span class="text-green-700 font-bold text-sm">{{ orders.length }} Total Orders</span>
+    </div>
+  </div>
+
+  @if(orders.length === 0)
+  <div class="text-center py-24 bg-white rounded-3xl border border-dashed border-gray-200 shadow-sm">
+    <div class="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+      </svg>
+    </div>
+    <h2 class="text-xl font-bold text-gray-800">No orders yet</h2>
+    <p class="text-gray-500 mt-2 mb-8">Ready to grow your garden? Explore our marketplace!</p>
+    <a href="/marketplace" class="bg-green-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-green-700 transition shadow-lg shadow-green-200">
+      Shop Now
+    </a>
+  </div>
+  @else
+  <div class="space-y-6">
+    @each(order in orders)
+    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition duration-300">
+      {{-- Order Header --}}
+      <div class="bg-gray-50/50 px-6 py-4 border-b border-gray-100 flex flex-wrap justify-between items-center gap-4">
+        <div class="flex items-center gap-4">
+          <div class="bg-white px-3 py-1 rounded-lg border border-gray-200 text-xs font-bold text-gray-500">
+            #{{ order.id }}
+          </div>
+          <span class="text-sm text-gray-400">{{ order.createdAt.toFormat('dd LLL yyyy, HH:mm') }}</span>
+        </div>
+        
+        <div class="flex items-center gap-3">
+          @if(order.orderStatusId === 1)
+            <span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-bold uppercase tracking-wider">Pending</span>
+          @elseif(order.orderStatusId === 3)
+            <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wider">Shipped</span>
+          @elseif(order.orderStatusId === 4)
+            <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold uppercase tracking-wider">Delivered</span>
+          @elseif(order.orderStatusId === 5)
+            <span class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold uppercase tracking-wider">Cancelled</span>
+          @else
+            <span class="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-bold uppercase tracking-wider">Processing</span>
+          @endif
+
+          @if(order.orderStatusId === 3)
+          <form action="/marketplace/orders/{{ order.id }}/receive" method="POST">
+            {{ csrfField() }}
+            <button type="submit" class="bg-green-600 text-white px-4 py-1.5 rounded-full text-xs font-bold hover:bg-green-700 transition shadow-sm">
+              Confirm Receipt
+            </button>
+          </form>
+          @endif
+        </div>
+      </div>
+
+      {{-- Order Items --}}
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-4">
+            @each(item in order.items)
+            <div class="flex items-center gap-4">
+              <div class="h-16 w-16 bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 flex-shrink-0">
+                @if(item.productItem.product.image)
+                  <img src="/{{ item.productItem.product.image }}" class="w-full h-full object-cover">
+                @else
+                  <div class="w-full h-full flex items-center justify-center text-gray-300 text-xs uppercase">No Img</div>
+                @endif
+              </div>
+              <div>
+                <h4 class="font-bold text-gray-900">{{ item.productItem.product.name }}</h4>
+                <p class="text-sm text-gray-500">{{ item.quantity }} x ${{ item.price.toLocaleString('en-US') }}</p>
+              </div>
+            </div>
+            @endeach
+          </div>
+          
+          <div class="md:text-right flex flex-col justify-center border-t md:border-t-0 md:border-l border-gray-50 pt-4 md:pt-0 md:pl-6 space-y-1">
+            @if(order.discountAmount > 0)
+              <p class="text-xs text-gray-400 font-semibold">Subtotal: ${{ (order.orderTotal + order.discountAmount).toLocaleString('en-US') }}</p>
+              <p class="text-xs text-green-600 font-bold">Voucher Discount: -${{ order.discountAmount.toLocaleString('en-US') }}</p>
+            @endif
+            <p class="text-sm text-gray-400">Total Amount</p>
+            <p class="text-3xl font-black text-green-700">${{ order.orderTotal.toLocaleString('en-US') }}</p>
+            <p class="text-xs text-gray-400">Inclusive of shipping</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    @endeach
+  </div>
+  @endif
+</div>
+
+@end
