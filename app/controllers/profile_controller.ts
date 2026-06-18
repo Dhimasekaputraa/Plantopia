@@ -88,27 +88,6 @@ export default class ProfileController {
       .where('name', promoName)
       .first()
 
-    // 2. Jika tidak ditemukan, coba buat otomatis dari kode preset/predefined
-    const PREDEFINED_CODES: Record<string, { discount: number, description: string }> = {
-      'FIRSTPLAN10': { discount: 0.25, description: 'Enjoy a premium 25% discount on your plant orders. Happy planting!' },
-      'SUNNYDAY5': { discount: 0.05, description: 'Warm weather savings! Grab a 5% discount off your total price.' },
-      'GOOD13S': { discount: 0.13, description: 'Lucky savings! Get 13% off on your botanical order.' },
-      'GOOOD13S': { discount: 0.13, description: 'Lucky savings! Get 13% off on your botanical order.' }, // Toleransi salah ketik
-    }
-
-    if (!promotion) {
-      const preset = PREDEFINED_CODES[promoName]
-      if (preset) {
-        promotion = await Promotion.create({
-          name: promoName,
-          description: preset.description,
-          discount: preset.discount,
-          startDate: DateTime.now().minus({ days: 5 }),
-          endDate: DateTime.now().plus({ days: 60 })
-        })
-      }
-    }
-
     if (!promotion) {
       session.flash('notification', {
         type: 'error',
@@ -117,7 +96,7 @@ export default class ProfileController {
       return response.redirect().back()
     }
 
-    // 3. Cek apakah aktif
+    // 2. Cek apakah aktif
     const now = new Date()
     if (promotion.startDate.toJSDate() > now || promotion.endDate.toJSDate() < now) {
       session.flash('notification', {
@@ -127,7 +106,7 @@ export default class ProfileController {
       return response.redirect().back()
     }
 
-    // 4. Cek apakah user sudah mengklaim voucher ini
+    // 3. Cek apakah user sudah mengklaim voucher ini
     const existingClaim = await UserPromotion.query()
       .where('userId', user.id)
       .where('promotionId', promotion.id)
@@ -141,7 +120,7 @@ export default class ProfileController {
       return response.redirect().back()
     }
 
-    // 5. Klaim Voucher
+    // 4. Klaim Voucher
     await UserPromotion.create({
       userId: user.id,
       promotionId: promotion.id
